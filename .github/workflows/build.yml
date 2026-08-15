@@ -1,0 +1,120 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*' # 当推送版本标签时触发
+  workflow_dispatch: # 允许手动触发
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+        node-version: [18, 20]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build for ${{ matrix.os }}
+      run: npm run build:${{ matrix.os == 'windows-latest' && 'win' || matrix.os == 'macos-latest' && 'mac' || 'linux' }}
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # 设置为true以跳过代码签名（在CI环境中）
+        CSC_IDENTITY_AUTO_DISCOVERY: false
+        
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: release-${{ matrix.os }}-node${{ matrix.node-version }}
+        path: |
+          dist/*.exe
+          dist/*.dmg
+          dist/*.AppImage
+          dist/*.deb
+          dist/*.rpm
+        retention-days: 30
+
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts
+        
+    - name: Display structure of downloaded files
+      run: ls -R artifacts/
+      
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: |
+          ## Changes
+          - 自动构建的跨平台版本
+          
+          ## 下载说明
+          - Windows: 下载 `.exe` 安装包
+          - macOS: 下载 `.dmg` 安装包
+          - Linux: 下载 `.AppImage` 或 `.deb` 安装包
+          
+          ## 系统要求
+          - Windows 10 或更高版本
+          - macOS 10.15 或更高版本
+          - Linux (支持主流发行版)
+        draft: false
+        prerelease: false
+        
+    - name: Upload Windows Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./artifacts/release-windows-latest-node20/DeepSeek-Harness-Desktop-Setup-*.exe
+        asset_name: DeepSeek-Harness-Desktop-Windows-Setup.exe
+        asset_content_type: application/octet-stream
+        
+    - name: Upload macOS Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./artifacts/release-macos-latest-node20/DeepSeek-Harness-Desktop-*.dmg
+        asset_name: DeepSeek-Harness-Desktop-macOS.dmg
+        asset_content_type: application/octet-stream
+        
+    - name: Upload Linux Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./artifacts/release-ubuntu-latest-node20/DeepSeek-Harness-Desktop-*.AppImage
+        asset_name: DeepSeek-Harness-Desktop-Linux.AppImage
+        asset_content_type: application/octet-stream

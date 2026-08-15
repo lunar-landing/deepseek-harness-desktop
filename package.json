@@ -1,0 +1,89 @@
+{
+  "name": "deepseek-harness-desktop",
+  "version": "1.0.0",
+  "description": "DeepSeek Harness Desktop Client",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "create-icons": "node create-icons.js",
+    "build": "npm run create-icons && electron-builder --win --mac --linux",
+    "build:win": "npm run create-icons && electron-builder --win",
+    "build:mac": "npm run create-icons && electron-builder --mac",
+    "build:linux": "npm run create-icons && electron-builder --linux",
+    "release": "npm run create-icons && electron-builder --win --mac --linux --publish always",
+    "version": "npm version patch && git push origin main --tags"
+  },
+  "keywords": [
+    "deepseek",
+    "harness",
+    "desktop",
+    "electron"
+  ],
+  "author": "",
+  "license": "MIT",
+  "type": "commonjs",
+  "devDependencies": {
+    "electron": "^43.4.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.deepseek.harness-desktop",
+    "productName": "DeepSeek Harness Desktop",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "package.json",
+      "build/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icons/icon.ico"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "icon": "build/icons/icon.icns",
+      "category": "public.app-category.developer-tools"
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icons/icon.png",
+      "category": "Development"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "build/icons/icon.ico",
+      "uninstallerIcon": "build/icons/icon.ico",
+      "installerHeaderIcon": "build/icons/icon.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "DeepSeek Harness Desktop"
+    }
+  }
+}
