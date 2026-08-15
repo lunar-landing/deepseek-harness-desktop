@@ -2,8 +2,11 @@ name: Build and Release
 
 on:
   push:
+    branches: [ main, master ]
     tags:
       - 'v*' # 当推送版本标签时触发
+  pull_request:
+    branches: [ main, master ]
   workflow_dispatch: # 允许手动触发
 
 jobs:
