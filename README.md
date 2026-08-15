@@ -53,7 +53,7 @@ git push origin main --tags
 
 ### 前置要求
 
-- Node.js 18 或更高版本
+- Node.js 22 或更高版本
 - npm 或 yarn
 
 ### 安装依赖

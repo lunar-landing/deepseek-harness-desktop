@@ -20,7 +20,7 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, macos-latest]
-        node-version: [18, 20]
+        node-version: [22]
     
     steps:
     - name: Checkout code
@@ -97,7 +97,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./artifacts/release-windows-latest-node20/DeepSeek-Harness-Desktop-Setup-*.exe
+        asset_path: ./artifacts/release-windows-latest-node22/DeepSeek-Harness-Desktop-Setup-*.exe
         asset_name: DeepSeek-Harness-Desktop-Windows-Setup.exe
         asset_content_type: application/octet-stream
         
@@ -107,6 +107,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./artifacts/release-macos-latest-node20/DeepSeek-Harness-Desktop-*.dmg
+        asset_path: ./artifacts/release-macos-latest-node22/DeepSeek-Harness-Desktop-*.dmg
         asset_name: DeepSeek-Harness-Desktop-macOS.dmg
         asset_content_type: application/octet-stream
