@@ -2,7 +2,20 @@
 
 [![Build and Release](https://github.com/YOUR_USERNAME/deepseek-harness-desktop/actions/workflows/build.yml/badge.svg)](https://github.com/YOUR_USERNAME/deepseek-harness-desktop/actions/workflows/build.yml)
 
+**注意：请将 `YOUR_USERNAME` 替换为您的 GitHub 用户名。**
+
 一个基于 Electron 的桌面客户端，用于封装 DeepSeek Harness 的 Web 界面。
+
+## 设置说明
+
+1. Fork 本项目到您的 GitHub 账户
+2. 将 `YOUR_USERNAME` 替换为您的 GitHub 用户名
+3. 推送到您的仓库
+4. 创建版本标签以触发自动构建：
+   ```bash
+   npm version patch
+   git push origin main --tags
+   ```
 
 ## 功能特性
 
