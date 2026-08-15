@@ -41,6 +41,9 @@ jobs:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         # 设置为true以跳过代码签名（在CI环境中）
         CSC_IDENTITY_AUTO_DISCOVERY: false
+        # 设置为true以允许在CI中创建符号链接
+        ELECTRON_CACHE: ${{ runner.temp }}/electron-cache
+        electron_config_cache: ${{ runner.temp }}/electron-cache
         
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
