@@ -11,22 +11,20 @@
 1. Fork 本项目到您的 GitHub 账户
 2. 将 `YOUR_USERNAME` 替换为您的 GitHub 用户名
 3. 推送到您的仓库
-4. 创建版本标签以触发自动发布：
-   ```bash
-   npm version patch
-   git push origin main --tags
-   ```
+4. 自动构建触发条件：
+   - **推送代码**：每次推送到 `main` 或 `master` 分支时自动构建
+   - **创建标签**：推送版本标签（如 `v1.0.0`）时自动构建并发布
+   - **Pull Request**：向 `main` 或 `master` 分支提交 PR 时自动构建
+   - **手动触发**：在 GitHub Actions 页面手动运行工作流
 
-## 自动构建触发条件
+### 发布新版本
+```bash
+# 更新版本号
+npm version patch
 
-工作流会在以下情况下自动运行：
-
-| 触发条件 | 说明 | 是否发布到 Releases |
-|----------|------|-------------------|
-| 推送到 `main` 或 `master` 分支 | 代码合并到主分支时 | ❌ 否（仅构建测试） |
-| Pull Request 到 `main` 或 `master` | 提交 PR 时 | ❌ 否（仅构建测试） |
-| 推送版本标签（以 `v` 开头） | 发布新版本时 | ✅ 是 |
-| 手动触发 | 在 GitHub Actions 页面手动运行 | ❌ 否（仅构建测试） |
+# 推送标签到GitHub
+git push origin main --tags
+```
 
 ## 功能特性
 
