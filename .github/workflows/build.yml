@@ -19,7 +19,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest]
+        os: [windows-latest, macos-latest]
         node-version: [18, 20]
     
     steps:
@@ -36,7 +36,7 @@ jobs:
       run: npm ci
       
     - name: Build for ${{ matrix.os }}
-      run: npm run build:${{ matrix.os == 'windows-latest' && 'win' || matrix.os == 'macos-latest' && 'mac' || 'linux' }}
+      run: npm run build:${{ matrix.os == 'windows-latest' && 'win' || 'mac' }}
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         # 设置为true以跳过代码签名（在CI环境中）
@@ -49,9 +49,6 @@ jobs:
         path: |
           dist/*.exe
           dist/*.dmg
-          dist/*.AppImage
-          dist/*.deb
-          dist/*.rpm
         retention-days: 30
 
   release:
@@ -87,12 +84,10 @@ jobs:
           ## 下载说明
           - Windows: 下载 `.exe` 安装包
           - macOS: 下载 `.dmg` 安装包
-          - Linux: 下载 `.AppImage` 或 `.deb` 安装包
           
           ## 系统要求
           - Windows 10 或更高版本
           - macOS 10.15 或更高版本
-          - Linux (支持主流发行版)
         draft: false
         prerelease: false
         
@@ -114,14 +109,4 @@ jobs:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./artifacts/release-macos-latest-node20/DeepSeek-Harness-Desktop-*.dmg
         asset_name: DeepSeek-Harness-Desktop-macOS.dmg
-        asset_content_type: application/octet-stream
-        
-    - name: Upload Linux Release
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./artifacts/release-ubuntu-latest-node20/DeepSeek-Harness-Desktop-*.AppImage
-        asset_name: DeepSeek-Harness-Desktop-Linux.AppImage
         asset_content_type: application/octet-stream

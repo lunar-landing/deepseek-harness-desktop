@@ -30,7 +30,7 @@ git push origin main --tags
 
 - 自动检测并连接到现有的 DeepSeek Harness 服务器（端口 3080）
 - 如果服务器未运行，自动启动服务器
-- 支持 Windows、Mac 和 Linux 平台
+- 支持 Windows 和 Mac 平台
 - 跨平台兼容性
 - 无边框窗口设计，隐藏标题栏
 - 白色边框和背景颜色
@@ -48,7 +48,6 @@ git push origin main --tags
 |------|----------|------|
 | Windows | `.exe` | NSIS 安装包 |
 | macOS | `.dmg` | 磁盘映像 |
-| Linux | `.AppImage` | 便携式应用 |
 
 ## 开发
 
@@ -83,9 +82,6 @@ npm run build:win
 
 # macOS
 npm run build:mac
-
-# Linux
-npm run build:linux
 ```
 
 ### 发布

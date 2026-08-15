@@ -7,11 +7,10 @@
     "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "create-icons": "node create-icons.js",
-    "build": "npm run create-icons && electron-builder --win --mac --linux",
+    "build": "npm run create-icons && electron-builder --win --mac",
     "build:win": "npm run create-icons && electron-builder --win",
     "build:mac": "npm run create-icons && electron-builder --mac",
-    "build:linux": "npm run create-icons && electron-builder --linux",
-    "release": "npm run create-icons && electron-builder --win --mac --linux --publish always",
+    "release": "npm run create-icons && electron-builder --win --mac --publish always",
     "version": "npm version patch && git push origin main --tags"
   },
   "keywords": [
@@ -62,18 +61,6 @@
       ],
       "icon": "build/icons/icon.icns",
       "category": "public.app-category.developer-tools"
-    },
-    "linux": {
-      "target": [
-        {
-          "target": "AppImage",
-          "arch": [
-            "x64"
-          ]
-        }
-      ],
-      "icon": "build/icons/icon.png",
-      "category": "Development"
     },
     "nsis": {
       "oneClick": false,
