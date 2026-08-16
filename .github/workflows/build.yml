@@ -39,21 +39,17 @@ jobs:
       run: npm run build:${{ matrix.os == 'windows-latest' && 'win' || 'mac' }}
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        
-    - name: Create archive (Windows)
-      if: matrix.os == 'windows-latest'
-      run: powershell -Command "Compress-Archive -Path 'dist\DeepSeek-Harness-Desktop-win32-x64' -DestinationPath 'dist\DeepSeek-Harness-Desktop-Windows-x64.zip' -Force"
-      shell: pwsh
-        
-    - name: Create archive (macOS)
-      if: matrix.os == 'macos-latest'
-      run: cd dist && zip -r "DeepSeek-Harness-Desktop-macOS-x64.zip" "DeepSeek-Harness-Desktop-darwin-x64"
+        # 禁用代码签名
+        CSC_IDENTITY_AUTO_DISCOVERY: false
         
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
         name: release-${{ matrix.os }}-node${{ matrix.node-version }}
-        path: dist/*.zip
+        path: |
+          dist/*.exe
+          dist/*.dmg
+          dist/*.zip
         retention-days: 30
 
   release:
@@ -85,13 +81,13 @@ jobs:
           - 自动构建的跨平台版本
           
           ## 下载说明
-          - Windows: 下载 `DeepSeek-Harness-Desktop-Windows-x64.zip`
-          - macOS: 下载 `DeepSeek-Harness-Desktop-macOS-x64.zip`
+          - Windows: 下载 `DeepSeek-Harness-Desktop-Setup-*.exe` 安装包
+          - macOS: 下载 `DeepSeek-Harness-Desktop-*.dmg` 安装包
           
           ## 安装说明
-          1. 下载对应平台的压缩包
-          2. 解压缩到任意目录
-          3. 运行 `DeepSeek-Harness-Desktop.exe`（Windows）或 `DeepSeek-Harness-Desktop.app`（macOS）
+          1. 下载对应平台的安装包
+          2. 运行安装程序，按提示完成安装
+          3. 安装完成后运行应用程序
           
           ## 系统要求
           - Windows 10 或更高版本
@@ -99,5 +95,5 @@ jobs:
         draft: false
         prerelease: false
         files: |
-          ./artifacts/release-windows-latest-node22/DeepSeek-Harness-Desktop-Windows-x64.zip
-          ./artifacts/release-macos-latest-node22/DeepSeek-Harness-Desktop-macOS-x64.zip
+          ./artifacts/release-windows-latest-node22/*.exe
+          ./artifacts/release-macos-latest-node22/*.dmg
