@@ -1,7 +1,4 @@
-<h1 align="center">
-  <img src="logo.svg" width="64" alt="DeepSeek Harness Desktop logo" valign="middle" />
-  DeepSeek Harness Desktop
-</h1>
+<h1 align="center">DeepSeek Harness Desktop</h1>
 
 <p align="center">
   基于 <a href="https://github.com/deepseek-ai/deepseek-harness">DeepSeek Harness</a> 构建的跨平台桌面客户端
