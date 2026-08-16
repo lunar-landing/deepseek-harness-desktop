@@ -1,5 +1,20 @@
 # DeepSeek Harness Desktop 发布指南
 
+## 应用图标
+
+应用图标从 `logo.svg` 自动生成。运行以下命令重新生成图标：
+
+```bash
+npm run create-icons
+```
+
+生成的图标文件位于 `build/icons/` 目录：
+- `icon.ico` - Windows 图标
+- `icon.icns` - macOS 图标
+- `icon.png` - 通用 PNG 图标
+
+如需更换图标，只需替换 `logo.svg` 文件后重新运行 `npm run create-icons`。
+
 ## 快速发布流程
 
 ### 方式一：使用 npm version 命令（推荐）
