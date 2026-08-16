@@ -11,15 +11,29 @@ if (!fs.existsSync(iconsDir)) {
   fs.mkdirSync(iconsDir, { recursive: true });
 }
 
-// 读取 SVG 文件
-const svgBuffer = fs.readFileSync(svgPath);
-
-// 需要生成的尺寸
-const sizes = [16, 32, 48, 64, 128, 256, 512, 1024];
+// 读取并修复 SVG 文件
+function getFixedSVG(size, padding = 0.15) {
+  const svgContent = fs.readFileSync(svgPath, 'utf8');
+  
+  // 计算带边距的 viewBox
+  const paddingPx = Math.round(size * padding);
+  const innerSize = size - (paddingPx * 2);
+  
+  // 创建带白色背景和边距的 SVG
+  const fixedSVG = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+  <rect width="${size}" height="${size}" fill="white" rx="${Math.round(size * 0.1)}"/>
+  <g transform="translate(${paddingPx}, ${paddingPx}) scale(${innerSize / 23})">
+    ${svgContent.replace(/<svg[^>]*>/, '').replace(/<\/svg>/, '')}
+  </g>
+</svg>`;
+  
+  return fixedSVG;
+}
 
 // 生成 PNG 图标
 async function generatePNG(size, outputPath) {
   try {
+    const svgBuffer = Buffer.from(getFixedSVG(size));
     await sharp(svgBuffer)
       .resize(size, size)
       .png()
@@ -38,6 +52,7 @@ async function generateICO() {
     // 生成多个尺寸的 PNG
     const pngBuffers = [];
     for (const size of [16, 32, 48, 64, 128, 256]) {
+      const svgBuffer = Buffer.from(getFixedSVG(size));
       const buffer = await sharp(svgBuffer)
         .resize(size, size)
         .png()
@@ -104,6 +119,7 @@ async function generateICNS() {
     const iconBlocks = [];
 
     for (const { size, type } of icnsSizes) {
+      const svgBuffer = Buffer.from(getFixedSVG(size));
       const buffer = await sharp(svgBuffer)
         .resize(size, size)
         .png()
