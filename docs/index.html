@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepSeek Harness Desktop - 桌面客户端</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        /* Header */
+        header {
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .github-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .github-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        /* Hero Section */
+        .hero {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            padding: 80px 0;
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        .hero-text h1 span {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-text p {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .download-buttons {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 32px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .hero-image {
+            position: relative;
+        }
+
+        .screenshot {
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Features */
+        .features {
+            padding: 80px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            margin-top: 40px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 32px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-4px);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .feature-card h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.6;
+        }
+
+        /* Version Info */
+        .version-info {
+            text-align: center;
+            padding: 40px 0;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+        }
+
+        /* Footer */
+        footer {
+            padding: 30px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+        }
+
+        footer a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            color: #fff;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .hero-text h1 {
+                font-size: 36px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .download-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="/" class="logo">
+                    <img src="logo.svg" alt="Logo">
+                    <span class="logo-text">DeepSeek Harness Desktop</span>
+                </a>
+                <a href="https://github.com/lunar-landing/deepseek-harness-desktop" class="github-link" target="_blank">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    GitHub
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <h1>DeepSeek Harness<br><span>桌面客户端</span></h1>
+                        <p>基于官方 DeepSeek Harness 构建的桌面端应用，开箱即用，无需配置。支持 Windows 和 macOS 平台，提供便携版和安装版两种选择。</p>
+                        <div class="download-buttons">
+                            <a href="#download" class="btn btn-primary" id="main-download">
+                                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                                <span id="main-download-text">下载</span>
+                            </a>
+                            <a href="https://github.com/lunar-landing/deepseek-harness-desktop/releases" class="btn btn-secondary" target="_blank">
+                                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+                                </svg>
+                                查看所有版本
+                            </a>
+                        </div>
+                    </div>
+                    <div class="hero-image">
+                        <img src="screenshot.png" alt="应用截图" class="screenshot">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="container">
+                <h2 style="font-size: 32px; text-align: center;">功能特性</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🚀</div>
+                        <h3>开箱即用</h3>
+                        <p>自动检测并连接到现有的 DeepSeek Harness 服务器，无需复杂配置即可开始使用。</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💻</div>
+                        <h3>跨平台支持</h3>
+                        <p>同时支持 Windows 和 macOS 平台，提供一致的用户体验。</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📦</div>
+                        <h3>多种安装方式</h3>
+                        <p>Windows 提供便携版和安装版，macOS 提供便携版，满足不同需求。</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎨</div>
+                        <h3>简洁界面</h3>
+                        <p>无边框窗口设计，白色主题，提供清爽的视觉体验。</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h3>轻量高效</h3>
+                        <p>基于 Electron 构建，启动快速，运行流畅，资源占用低。</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔒</div>
+                        <h3>开源安全</h3>
+                        <p>完全开源，代码透明，社区维护，安全可靠。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="download" class="features">
+            <div class="container">
+                <h2 style="font-size: 32px; text-align: center; margin-bottom: 40px;">下载安装</h2>
+                <div class="features-grid" style="grid-template-columns: repeat(2, 1fr);">
+                    <div class="feature-card" style="text-align: center;">
+                        <div class="feature-icon" style="margin: 0 auto 20px; font-size: 32px; width: 64px; height: 64px;">🪟</div>
+                        <h3>Windows</h3>
+                        <p style="margin-bottom: 24px;">Windows 10 或更高版本</p>
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <a href="https://github.com/lunar-landing/deepseek-harness-desktop/releases/latest" class="btn btn-primary" target="_blank" style="justify-content: center;">
+                                下载安装版 (.exe)
+                            </a>
+                            <a href="https://github.com/lunar-landing/deepseek-harness-desktop/releases/latest" class="btn btn-secondary" target="_blank" style="justify-content: center;">
+                                下载便携版 (.zip)
+                            </a>
+                        </div>
+                    </div>
+                    <div class="feature-card" style="text-align: center;">
+                        <div class="feature-icon" style="margin: 0 auto 20px; font-size: 32px; width: 64px; height: 64px;">🍎</div>
+                        <h3>macOS</h3>
+                        <p style="margin-bottom: 24px;">macOS 10.15 或更高版本</p>
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <a href="https://github.com/lunar-landing/deepseek-harness-desktop/releases/latest" class="btn btn-primary" target="_blank" style="justify-content: center;">
+                                下载 macOS 版 (.zip)
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="version-info">
+                    <p>当前版本: v1.1.3 · <a href="https://github.com/lunar-landing/deepseek-harness-desktop/releases" target="_blank">查看所有版本</a></p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>这是由社区维护的开源项目，并非 DeepSeek 官方产品。</p>
+            <p style="margin-top: 8px;">
+                <a href="https://github.com/lunar-landing/deepseek-harness-desktop" target="_blank">GitHub</a> · 
+                <a href="https://github.com/lunar-landing/deepseek-harness-desktop/issues" target="_blank">反馈问题</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // 检测操作系统并更新下载按钮
+        function detectOS() {
+            const userAgent = navigator.userAgent.toLowerCase();
+            const mainBtn = document.getElementById('main-download');
+            const mainText = document.getElementById('main-download-text');
+            
+            if (userAgent.includes('mac')) {
+                mainText.textContent = '下载 macOS 版';
+            } else if (userAgent.includes('win')) {
+                mainText.textContent = '下载 Windows 版';
+            } else {
+                mainText.textContent = '下载';
+            }
+        }
+
+        // 页面加载时检测
+        window.addEventListener('load', detectOS);
+    </script>
+</body>
+</html>
