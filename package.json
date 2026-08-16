@@ -51,7 +51,9 @@
         }
       ],
       "icon": "build/icons/icon.ico",
-      "sign": false
+      "sign": false,
+      "signingHashAlgorithms": [],
+      "verifyUpdateCodeSignature": false
     },
     "mac": {
       "target": [
