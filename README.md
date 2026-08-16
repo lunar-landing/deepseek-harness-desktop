@@ -1,30 +1,22 @@
 # DeepSeek Harness Desktop
 
-[![Build and Release](https://github.com/YOUR_USERNAME/deepseek-harness-desktop/actions/workflows/build.yml/badge.svg)](https://github.com/YOUR_USERNAME/deepseek-harness-desktop/actions/workflows/build.yml)
-
-**注意：请将 `YOUR_USERNAME` 替换为您的 GitHub 用户名。**
+[![Build and Release](https://github.com/lunar-landing/deepseek-harness-desktop/actions/workflows/build.yml/badge.svg)](https://github.com/lunar-landing/deepseek-harness-desktop/actions/workflows/build.yml)
 
 一个基于 Electron 的桌面客户端，用于封装 DeepSeek Harness 的 Web 界面。
 
-## 设置说明
-
-1. Fork 本项目到您的 GitHub 账户
-2. 将 `YOUR_USERNAME` 替换为您的 GitHub 用户名
-3. 推送到您的仓库
-4. 自动构建触发条件：
-   - **推送代码**：每次推送到 `main` 或 `master` 分支时自动构建
-   - **创建标签**：推送版本标签（如 `v1.0.0`）时自动构建并发布
-   - **Pull Request**：向 `main` 或 `master` 分支提交 PR 时自动构建
-   - **手动触发**：在 GitHub Actions 页面手动运行工作流
+## 快速开始
 
 ### 发布新版本
+
 ```bash
 # 更新版本号
 npm version patch
 
-# 推送标签到GitHub
-git push origin main --tags
+# 推送标签到 GitHub
+git push origin master --tags
 ```
+
+📖 **详细发布说明请查看 [RELEASE.md](RELEASE.md)**
 
 ## 功能特性
 
@@ -40,7 +32,7 @@ git push origin main --tags
 
 ### 最新版本
 
-访问 [GitHub Releases](https://github.com/YOUR_USERNAME/deepseek-harness-desktop/releases) 页面下载最新版本。
+访问 [GitHub Releases](https://github.com/lunar-landing/deepseek-harness-desktop/releases) 页面下载最新版本。
 
 ### 安装说明
 
@@ -154,5 +146,5 @@ ISC License
 
 ## 联系方式
 
-- 项目链接: https://github.com/YOUR_USERNAME/deepseek-harness-desktop
-- 问题反馈: https://github.com/YOUR_USERNAME/deepseek-harness-desktop/issues
+- 项目链接: https://github.com/lunar-landing/deepseek-harness-desktop
+- 问题反馈: https://github.com/lunar-landing/deepseek-harness-desktop/issues
