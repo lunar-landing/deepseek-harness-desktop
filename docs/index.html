@@ -3,8 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DeepSeek Harness Desktop - 桌面客户端</title>
+    <title>DeepSeek Harness 桌面端</title>
     <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --bg-card: #161616;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --border: #262626;
+            --radius: 12px;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,28 +24,26 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            line-height: 1.6;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 960px;
             margin: 0 auto;
-            padding: 0 20px;
-            width: 100%;
+            padding: 0 24px;
         }
 
         /* Header */
         header {
             padding: 20px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid var(--border);
         }
 
-        .header-content {
+        .header-inner {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -44,222 +54,373 @@
             align-items: center;
             gap: 12px;
             text-decoration: none;
-            color: #fff;
+            color: var(--text-primary);
         }
 
-        .logo img {
-            width: 40px;
-            height: 40px;
+        .logo-icon {
+            width: 36px;
+            height: 36px;
             border-radius: 8px;
         }
 
         .logo-text {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 600;
+            letter-spacing: -0.02em;
         }
 
-        .github-link {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
+        .github-btn {
             display: flex;
             align-items: center;
             gap: 8px;
             padding: 8px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
             border-radius: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s;
         }
 
-        .github-link:hover {
-            background: rgba(255, 255, 255, 0.2);
-            color: #fff;
+        .github-btn:hover {
+            background: var(--border);
+            color: var(--text-primary);
         }
 
-        /* Hero Section */
+        .github-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Hero */
         .hero {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            padding: 80px 0;
+            padding: 80px 0 60px;
+            text-align: center;
         }
 
-        .hero-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 80px;
+        .hero-badge {
+            display: inline-flex;
             align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 100px;
+            color: var(--accent);
+            font-size: 13px;
+            margin-bottom: 24px;
         }
 
-        .hero-text h1 {
+        .hero h1 {
             font-size: 48px;
             font-weight: 700;
-            line-height: 1.2;
-            margin-bottom: 20px;
-        }
-
-        .hero-text h1 span {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            letter-spacing: -0.03em;
+            margin-bottom: 16px;
+            background: linear-gradient(180deg, #fff 0%, #a0a0a0 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        .hero-text p {
+        .hero p {
             font-size: 18px;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 40px;
-            line-height: 1.6;
+            color: var(--text-secondary);
+            max-width: 480px;
+            margin: 0 auto 40px;
         }
 
-        .download-buttons {
+        .download-group {
             display: flex;
-            gap: 16px;
+            justify-content: center;
+            gap: 12px;
             flex-wrap: wrap;
+            margin-bottom: 20px;
         }
 
         .btn {
             display: inline-flex;
             align-items: center;
-            gap: 12px;
-            padding: 16px 32px;
-            border-radius: 12px;
+            gap: 10px;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 500;
             text-decoration: none;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s ease;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #fff;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            background: var(--accent);
+            color: white;
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+            background: var(--accent-hover);
+            transform: translateY(-1px);
         }
 
         .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
         }
 
         .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
+            background: var(--border);
         }
 
         .btn-icon {
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
         }
 
-        .hero-image {
-            position: relative;
+        .version-info {
+            font-size: 13px;
+            color: var(--text-secondary);
         }
 
-        .screenshot {
+        .version-info a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .version-info a:hover {
+            text-decoration: underline;
+        }
+
+        /* Screenshot */
+        .screenshot-section {
+            padding: 0 0 80px;
+        }
+
+        .screenshot-wrapper {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .screenshot-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 20px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .screenshot-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #333;
+        }
+
+        .screenshot-dot:nth-child(1) { background: #ff5f57; }
+        .screenshot-dot:nth-child(2) { background: #ffbd2e; }
+        .screenshot-dot:nth-child(3) { background: #28c840; }
+
+        .screenshot-img {
             width: 100%;
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            display: block;
         }
 
         /* Features */
         .features {
             padding: 80px 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid var(--border);
+        }
+
+        .features-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .features-header h2 {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 12px;
+        }
+
+        .features-header p {
+            color: var(--text-secondary);
+            font-size: 16px;
         }
 
         .features-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 32px;
-            margin-top: 40px;
+            gap: 16px;
         }
 
         .feature-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 32px;
-            transition: all 0.3s ease;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            transition: all 0.2s;
         }
 
         .feature-card:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-4px);
+            border-color: #333;
+            transform: translateY(-2px);
         }
 
         .feature-icon {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 12px;
+            width: 44px;
+            height: 44px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 20px;
-            font-size: 24px;
+            font-size: 22px;
+            margin-bottom: 16px;
         }
 
         .feature-card h3 {
-            font-size: 20px;
-            margin-bottom: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
         }
 
         .feature-card p {
-            color: rgba(255, 255, 255, 0.6);
-            line-height: 1.6;
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
         }
 
-        /* Version Info */
-        .version-info {
+        /* Download Section */
+        .download-section {
+            padding: 80px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .download-header {
             text-align: center;
-            padding: 40px 0;
-            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 48px;
+        }
+
+        .download-header h2 {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .platforms-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .platform-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px;
+            text-align: center;
+        }
+
+        .platform-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .platform-card h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .platform-card .desc {
+            color: var(--text-secondary);
             font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .platform-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .platform-links .btn {
+            justify-content: center;
+            width: 100%;
+        }
+
+        /* Notice */
+        .notice {
+            text-align: center;
+            padding: 24px;
+            background: rgba(59, 130, 246, 0.05);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            border-radius: var(--radius);
+            margin-top: 48px;
+        }
+
+        .notice p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .notice a {
+            color: var(--accent);
+            text-decoration: none;
         }
 
         /* Footer */
         footer {
-            padding: 30px 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px 0;
+            border-top: 1px solid var(--border);
             text-align: center;
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 14px;
+        }
+
+        footer p {
+            font-size: 13px;
+            color: var(--text-secondary);
         }
 
         footer a {
-            color: rgba(255, 255, 255, 0.7);
+            color: var(--text-secondary);
             text-decoration: none;
         }
 
         footer a:hover {
-            color: #fff;
+            color: var(--text-primary);
         }
 
         /* Responsive */
         @media (max-width: 768px) {
-            .hero-content {
-                grid-template-columns: 1fr;
-                gap: 40px;
+            .hero h1 {
+                font-size: 36px;
             }
 
-            .hero-text h1 {
-                font-size: 36px;
+            .hero p {
+                font-size: 16px;
             }
 
             .features-grid {
                 grid-template-columns: 1fr;
             }
 
-            .download-buttons {
+            .platforms-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .download-group {
                 flex-direction: column;
+                align-items: center;
             }
 
             .btn {
+                width: 100%;
+                max-width: 280px;
                 justify-content: center;
             }
         }
@@ -268,13 +429,13 @@
 <body>
     <header>
         <div class="container">
-            <div class="header-content">
+            <div class="header-inner">
                 <a href="/" class="logo">
-                    <img src="logo.svg" alt="Logo">
-                    <span class="logo-text">DeepSeek Harness Desktop</span>
+                    <img src="logo.svg" alt="Logo" class="logo-icon">
+                    <span class="logo-text">DeepSeek Harness 桌面端</span>
                 </a>
-                <a href="https://github.com/lunar-landing/deepseek-harness-desktop" class="github-link" target="_blank">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                <a href="https://github.com/lunar-landing/deepseek-harness-desktop" class="github-btn" target="_blank">
+                    <svg class="github-icon" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
                     </svg>
                     GitHub
@@ -286,102 +447,123 @@
     <main>
         <section class="hero">
             <div class="container">
-                <div class="hero-content">
-                    <div class="hero-text">
-                        <h1>DeepSeek Harness<br><span>桌面客户端</span></h1>
-                        <p>基于官方 DeepSeek Harness 构建的桌面端应用，开箱即用，无需配置。支持 Windows 和 macOS 平台，提供便携版和安装版两种选择。</p>
-                        <div class="download-buttons">
-                            <a href="#download" class="btn btn-primary" id="main-download">
-                                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                    <polyline points="7 10 12 15 17 10"/>
-                                    <line x1="12" y1="15" x2="12" y2="3"/>
-                                </svg>
-                                <span id="main-download-text">下载</span>
-                            </a>
-                            <a href="https://github.com/lunar-landing/deepseek-harness-desktop/releases" class="btn btn-secondary" target="_blank">
-                                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
-                                </svg>
-                                查看所有版本
-                            </a>
-                        </div>
+                <div class="hero-badge">
+                    <span>✦</span>
+                    <span>基于官方 DeepSeek Harness 构建</span>
+                </div>
+                <h1>DeepSeek Harness 桌面端</h1>
+                <p>基于官方 DeepSeek Harness 构建的桌面端，开箱即用</p>
+                <div class="download-group">
+                    <a href="https://github.com/lunar-landing/deepseek-harness-desktop/releases/latest" class="btn btn-primary" target="_blank" id="download-mac">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        下载 Mac 版
+                    </a>
+                    <a href="https://github.com/lunar-landing/deepseek-harness-desktop/releases/latest" class="btn btn-secondary" target="_blank" id="download-win">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        下载 Windows 版
+                    </a>
+                </div>
+                <p class="version-info">
+                    <a href="https://github.com/lunar-landing/deepseek-harness-desktop/releases" target="_blank">在 GitHub 上查看</a>
+                    · 当前版本 v1.1.3
+                </p>
+            </div>
+        </section>
+
+        <section class="screenshot-section">
+            <div class="container">
+                <div class="screenshot-wrapper">
+                    <div class="screenshot-header">
+                        <div class="screenshot-dot"></div>
+                        <div class="screenshot-dot"></div>
+                        <div class="screenshot-dot"></div>
                     </div>
-                    <div class="hero-image">
-                        <img src="images/desktop-screenshot.png" alt="应用截图" class="screenshot">
-                    </div>
+                    <img src="images/desktop-screenshot.png" alt="DeepSeek Harness 桌面端界面" class="screenshot-img">
                 </div>
             </div>
         </section>
 
         <section class="features">
             <div class="container">
-                <h2 style="font-size: 32px; text-align: center;">功能特性</h2>
+                <div class="features-header">
+                    <h2>功能特性</h2>
+                    <p>开箱即用的 DeepSeek Harness 桌面体验</p>
+                </div>
                 <div class="features-grid">
                     <div class="feature-card">
                         <div class="feature-icon">🚀</div>
                         <h3>开箱即用</h3>
-                        <p>自动检测并连接到现有的 DeepSeek Harness 服务器，无需复杂配置即可开始使用。</p>
+                        <p>自动检测并连接到现有的 DeepSeek Harness 服务器，无需复杂配置</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon">💻</div>
                         <h3>跨平台支持</h3>
-                        <p>同时支持 Windows 和 macOS 平台，提供一致的用户体验。</p>
+                        <p>同时支持 Windows 和 macOS 平台，提供一致的用户体验</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon">📦</div>
                         <h3>多种安装方式</h3>
-                        <p>Windows 提供便携版和安装版，macOS 提供便携版，满足不同需求。</p>
+                        <p>Windows 提供安装版和便携版，macOS 提供便携版</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon">🎨</div>
                         <h3>简洁界面</h3>
-                        <p>无边框窗口设计，白色主题，提供清爽的视觉体验。</p>
+                        <p>无边框窗口设计，白色主题，清爽的视觉体验</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon">⚡</div>
                         <h3>轻量高效</h3>
-                        <p>基于 Electron 构建，启动快速，运行流畅，资源占用低。</p>
+                        <p>启动快速，运行流畅，资源占用低</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon">🔒</div>
-                        <h3>开源安全</h3>
-                        <p>完全开源，代码透明，社区维护，安全可靠。</p>
+                        <h3>安全可靠</h3>
+                        <p>沙箱化渲染进程，启用上下文隔离，开源透明</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="download" class="features">
+        <section class="download-section">
             <div class="container">
-                <h2 style="font-size: 32px; text-align: center; margin-bottom: 40px;">下载安装</h2>
-                <div class="features-grid" style="grid-template-columns: repeat(2, 1fr);">
-                    <div class="feature-card" style="text-align: center;">
-                        <div class="feature-icon" style="margin: 0 auto 20px; font-size: 32px; width: 64px; height: 64px;">🪟</div>
-                        <h3>Windows</h3>
-                        <p style="margin-bottom: 24px;">Windows 10 或更高版本</p>
-                        <div style="display: flex; flex-direction: column; gap: 12px;">
-                            <a href="https://github.com/lunar-landing/deepseek-harness-desktop/releases/latest" class="btn btn-primary" target="_blank" style="justify-content: center;">
-                                下载安装版 (.exe)
-                            </a>
-                            <a href="https://github.com/lunar-landing/deepseek-harness-desktop/releases/latest" class="btn btn-secondary" target="_blank" style="justify-content: center;">
-                                下载便携版 (.zip)
+                <div class="download-header">
+                    <h2>下载安装</h2>
+                </div>
+                <div class="platforms-grid">
+                    <div class="platform-card">
+                        <div class="platform-icon">🍎</div>
+                        <h3>macOS</h3>
+                        <p class="desc">支持 Apple Silicon 和 Intel 芯片</p>
+                        <div class="platform-links">
+                            <a href="https://github.com/lunar-landing/deepseek-harness-desktop/releases/latest" class="btn btn-primary" target="_blank">
+                                下载 macOS 版
                             </a>
                         </div>
                     </div>
-                    <div class="feature-card" style="text-align: center;">
-                        <div class="feature-icon" style="margin: 0 auto 20px; font-size: 32px; width: 64px; height: 64px;">🍎</div>
-                        <h3>macOS</h3>
-                        <p style="margin-bottom: 24px;">macOS 10.15 或更高版本</p>
-                        <div style="display: flex; flex-direction: column; gap: 12px;">
-                            <a href="https://github.com/lunar-landing/deepseek-harness-desktop/releases/latest" class="btn btn-primary" target="_blank" style="justify-content: center;">
-                                下载 macOS 版 (.zip)
+                    <div class="platform-card">
+                        <div class="platform-icon">🪟</div>
+                        <h3>Windows</h3>
+                        <p class="desc">Windows 10 或更高版本</p>
+                        <div class="platform-links">
+                            <a href="https://github.com/lunar-landing/deepseek-harness-desktop/releases/latest" class="btn btn-primary" target="_blank">
+                                下载安装版
+                            </a>
+                            <a href="https://github.com/lunar-landing/deepseek-harness-desktop/releases/latest" class="btn btn-secondary" target="_blank">
+                                下载便携版
                             </a>
                         </div>
                     </div>
                 </div>
-                <div class="version-info">
-                    <p>当前版本: v1.1.3 · <a href="https://github.com/lunar-landing/deepseek-harness-desktop/releases" target="_blank">查看所有版本</a></p>
+                <div class="notice">
+                    <p>这是由社区维护的开源项目，并非 DeepSeek 官方产品。<a href="https://github.com/lunar-landing/deepseek-harness-desktop" target="_blank">在 GitHub 上查看</a></p>
                 </div>
             </div>
         </section>
@@ -389,31 +571,34 @@
 
     <footer>
         <div class="container">
-            <p>这是由社区维护的开源项目，并非 DeepSeek 官方产品。</p>
-            <p style="margin-top: 8px;">
+            <p>
                 <a href="https://github.com/lunar-landing/deepseek-harness-desktop" target="_blank">GitHub</a> · 
-                <a href="https://github.com/lunar-landing/deepseek-harness-desktop/issues" target="_blank">反馈问题</a>
+                <a href="https://github.com/lunar-landing/deepseek-harness-desktop/releases" target="_blank">Releases</a> · 
+                <a href="https://github.com/lunar-landing/deepseek-harness-desktop/issues" target="_blank">Issues</a>
             </p>
         </div>
     </footer>
 
     <script>
-        // 检测操作系统并更新下载按钮
+        // 检测操作系统
         function detectOS() {
             const userAgent = navigator.userAgent.toLowerCase();
-            const mainBtn = document.getElementById('main-download');
-            const mainText = document.getElementById('main-download-text');
+            const macBtn = document.getElementById('download-mac');
+            const winBtn = document.getElementById('download-win');
             
             if (userAgent.includes('mac')) {
-                mainText.textContent = '下载 macOS 版';
-            } else if (userAgent.includes('win')) {
-                mainText.textContent = '下载 Windows 版';
+                macBtn.classList.remove('btn-secondary');
+                macBtn.classList.add('btn-primary');
+                winBtn.classList.remove('btn-primary');
+                winBtn.classList.add('btn-secondary');
             } else {
-                mainText.textContent = '下载';
+                winBtn.classList.remove('btn-secondary');
+                winBtn.classList.add('btn-primary');
+                macBtn.classList.remove('btn-primary');
+                macBtn.classList.add('btn-secondary');
             }
         }
 
-        // 页面加载时检测
         window.addEventListener('load', detectOS);
     </script>
 </body>
