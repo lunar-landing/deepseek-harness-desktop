@@ -168,13 +168,37 @@ deepseek-harness-desktop/
 
 ## Release New Version
 
-```bash
-# Update version
-npm version patch    # or minor, major
+### Method 1: Using npm version (Recommended)
 
-# Push to GitHub
+```bash
+# 1. Update version (automatically modifies package.json, creates commit and tag)
+npm version patch    # 1.0.0 → 1.0.1 (bug fixes)
+npm version minor    # 1.0.0 → 1.1.0 (new features)
+npm version major    # 1.0.0 → 2.0.0 (breaking changes)
+
+# 2. Push code and tags to GitHub
 git push origin master --tags
 ```
+
+### Method 2: Manual
+
+```bash
+# 1. Update version in package.json
+# Change "version": "1.0.0" to "version": "1.0.1"
+
+# 2. Commit changes
+git add .
+git commit -m "Bump version to 1.0.1"
+
+# 3. Create tag
+git tag v1.0.1
+
+# 4. Push code and tags
+git push origin master --tags
+```
+
+> [!IMPORTANT]
+> Tag format must start with `v`, e.g., `v1.0.1`, otherwise GitHub Actions will not trigger the release workflow.
 
 GitHub Actions will automatically build and publish to [Releases](https://github.com/lunar-landing/deepseek-harness-desktop/releases).
 

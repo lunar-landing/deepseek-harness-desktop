@@ -164,13 +164,37 @@ deepseek-harness-desktop/
 
 ## 发布新版本
 
-```bash
-# 更新版本号
-npm version patch    # 或 minor、major
+### 方式一：使用 npm version（推荐）
 
-# 推送到 GitHub
+```bash
+# 1. 更新版本号（自动修改 package.json、创建 commit 和 tag）
+npm version patch    # 1.0.0 → 1.0.1（修复 bug）
+npm version minor    # 1.0.0 → 1.1.0（新增功能）
+npm version major    # 1.0.0 → 2.0.0（重大更新）
+
+# 2. 推送代码和标签到 GitHub
 git push origin master --tags
 ```
+
+### 方式二：手动操作
+
+```bash
+# 1. 修改 package.json 中的版本号
+# 将 "version": "1.0.0" 改为 "version": "1.0.1"
+
+# 2. 提交更改
+git add .
+git commit -m "Bump version to 1.0.1"
+
+# 3. 创建标签
+git tag v1.0.1
+
+# 4. 推送代码和标签
+git push origin master --tags
+```
+
+> [!IMPORTANT]
+> 标签格式必须以 `v` 开头，如 `v1.0.1`，否则 GitHub Actions 不会触发发布流程。
 
 GitHub Actions 会自动构建并发布到 [Releases](https://github.com/lunar-landing/deepseek-harness-desktop/releases)。
 
