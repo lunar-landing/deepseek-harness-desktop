@@ -45,13 +45,20 @@ jobs:
         ELECTRON_CACHE: ${{ runner.temp }}/electron-cache
         electron_config_cache: ${{ runner.temp }}/electron-cache
         
+    - name: Create ZIP archive
+      run: |
+        if [ "$RUNNER_OS" == "Windows" ]; then
+          Compress-Archive -Path "dist\DeepSeek-Harness-Desktop-win32-x64" -DestinationPath "dist\DeepSeek-Harness-Desktop-Windows.zip"
+        else
+          cd dist && zip -r "DeepSeek-Harness-Desktop-macOS.zip" "DeepSeek-Harness-Desktop-darwin-x64"
+        fi
+      shell: bash
+        
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
         name: release-${{ matrix.os }}-node${{ matrix.node-version }}
-        path: |
-          dist/*.exe
-          dist/*.dmg
+        path: dist/*.zip
         retention-days: 30
 
   release:
@@ -85,8 +92,8 @@ jobs:
           - 自动构建的跨平台版本
           
           ## 下载说明
-          - Windows: 下载 `.exe` 安装包
-          - macOS: 下载 `.dmg` 安装包
+          - Windows: 下载 `.zip` 文件，解压后运行 `DeepSeek-Harness-Desktop.exe`
+          - macOS: 下载 `.zip` 文件，解压后运行 `DeepSeek-Harness-Desktop.app`
           
           ## 系统要求
           - Windows 10 或更高版本
@@ -100,9 +107,9 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./artifacts/release-windows-latest-node22/DeepSeek-Harness-Desktop-Setup-*.exe
-        asset_name: DeepSeek-Harness-Desktop-Windows-Setup.exe
-        asset_content_type: application/octet-stream
+        asset_path: ./artifacts/release-windows-latest-node22/DeepSeek-Harness-Desktop-Windows.zip
+        asset_name: DeepSeek-Harness-Desktop-Windows.zip
+        asset_content_type: application/zip
         
     - name: Upload macOS Release
       uses: actions/upload-release-asset@v1
@@ -110,6 +117,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./artifacts/release-macos-latest-node22/DeepSeek-Harness-Desktop-*.dmg
-        asset_name: DeepSeek-Harness-Desktop-macOS.dmg
-        asset_content_type: application/octet-stream
+        asset_path: ./artifacts/release-macos-latest-node22/DeepSeek-Harness-Desktop-macOS.zip
+        asset_name: DeepSeek-Harness-Desktop-macOS.zip
+        asset_content_type: application/zip
