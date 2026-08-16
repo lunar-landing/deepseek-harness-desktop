@@ -33,8 +33,6 @@ jobs:
       
     - name: Build portable version
       run: npm run build:win
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
     - name: Create portable archive
       run: powershell -Command "Compress-Archive -Path 'dist\DeepSeek-Harness-Desktop-win32-x64' -DestinationPath 'dist\DeepSeek-Harness-Desktop-Windows-x64-Portable.zip' -Force"
@@ -43,7 +41,6 @@ jobs:
     - name: Build installer version
       run: npm run build:win:installer
       env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         CSC_IDENTITY_AUTO_DISCOVERY: false
         
     - name: Upload artifacts
@@ -74,8 +71,6 @@ jobs:
       
     - name: Build for macOS
       run: npm run build:mac
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
     - name: Create archive
       run: cd dist && zip -r "DeepSeek-Harness-Desktop-macOS-x64.zip" "DeepSeek-Harness-Desktop-darwin-x64"
