@@ -42,12 +42,18 @@ git push origin main --tags
 
 访问 [GitHub Releases](https://github.com/YOUR_USERNAME/deepseek-harness-desktop/releases) 页面下载最新版本。
 
+### 安装说明
+
+1. 下载对应平台的压缩包（Windows: `DeepSeek-Harness-Desktop-Windows-x64.zip`，macOS: `DeepSeek-Harness-Desktop-macOS-x64.zip`）
+2. 解压缩到任意目录
+3. 运行 `DeepSeek-Harness-Desktop.exe`（Windows）或 `DeepSeek-Harness-Desktop.app`（macOS）
+
 ### 平台支持
 
 | 平台 | 文件格式 | 说明 |
 |------|----------|------|
-| Windows | `.exe` | NSIS 安装包 |
-| macOS | `.dmg` | 磁盘映像 |
+| Windows | `.zip` | 便携版压缩包，解压后直接运行 |
+| macOS | `.zip` | 便携版压缩包，解压后直接运行 |
 
 ## 开发
 

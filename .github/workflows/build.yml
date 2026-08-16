@@ -39,20 +39,6 @@ jobs:
       run: npm run build:${{ matrix.os == 'windows-latest' && 'win' || 'mac' }}
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        # 设置为true以跳过代码签名（在CI环境中）
-        CSC_IDENTITY_AUTO_DISCOVERY: false
-        # 设置为true以允许在CI中创建符号链接
-        ELECTRON_CACHE: ${{ runner.temp }}/electron-cache
-        electron_config_cache: ${{ runner.temp }}/electron-cache
-        
-    - name: Create ZIP archive
-      run: |
-        if [ "$RUNNER_OS" == "Windows" ]; then
-          Compress-Archive -Path "dist\DeepSeek-Harness-Desktop-win32-x64" -DestinationPath "dist\DeepSeek-Harness-Desktop-Windows.zip"
-        else
-          cd dist && zip -r "DeepSeek-Harness-Desktop-macOS.zip" "DeepSeek-Harness-Desktop-darwin-x64"
-        fi
-      shell: bash
         
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
@@ -92,8 +78,13 @@ jobs:
           - 自动构建的跨平台版本
           
           ## 下载说明
-          - Windows: 下载 `.zip` 文件，解压后运行 `DeepSeek-Harness-Desktop.exe`
-          - macOS: 下载 `.zip` 文件，解压后运行 `DeepSeek-Harness-Desktop.app`
+          - Windows: 下载 `DeepSeek-Harness-Desktop-Windows-x64.zip`
+          - macOS: 下载 `DeepSeek-Harness-Desktop-macOS-x64.zip`
+          
+          ## 安装说明
+          1. 下载对应平台的压缩包
+          2. 解压缩到任意目录
+          3. 运行 `DeepSeek-Harness-Desktop.exe`（Windows）或 `DeepSeek-Harness-Desktop.app`（macOS）
           
           ## 系统要求
           - Windows 10 或更高版本
@@ -107,8 +98,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./artifacts/release-windows-latest-node22/DeepSeek-Harness-Desktop-Windows.zip
-        asset_name: DeepSeek-Harness-Desktop-Windows.zip
+        asset_path: ./artifacts/release-windows-latest-node22/DeepSeek-Harness-Desktop-Windows-x64.zip
+        asset_name: DeepSeek-Harness-Desktop-Windows-x64.zip
         asset_content_type: application/zip
         
     - name: Upload macOS Release
@@ -117,6 +108,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./artifacts/release-macos-latest-node22/DeepSeek-Harness-Desktop-macOS.zip
-        asset_name: DeepSeek-Harness-Desktop-macOS.zip
+        asset_path: ./artifacts/release-macos-latest-node22/DeepSeek-Harness-Desktop-macOS-x64.zip
+        asset_name: DeepSeek-Harness-Desktop-macOS-x64.zip
         asset_content_type: application/zip

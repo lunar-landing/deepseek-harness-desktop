@@ -7,7 +7,7 @@
     "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "create-icons": "node create-icons.js",
-    "build": "node build.js",
+    "build": "npm run create-icons && node build.js",
     "build:win": "npm run create-icons && electron-packager . DeepSeek-Harness-Desktop --platform=win32 --arch=x64 --out=dist --overwrite",
     "build:mac": "npm run create-icons && electron-packager . DeepSeek-Harness-Desktop --platform=darwin --arch=x64 --out=dist --overwrite",
     "release": "npm run build",
@@ -26,5 +26,48 @@
     "electron": "^43.4.0",
     "electron-builder": "^24.13.3",
     "electron-packager": "^17.1.2"
+  },
+  "build": {
+    "appId": "com.deepseek.harness-desktop",
+    "productName": "DeepSeek Harness Desktop",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "package.json",
+      "build/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "build/icons/icon.ico",
+      "sign": false
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64", "arm64"]
+        }
+      ],
+      "icon": "build/icons/icon.icns",
+      "category": "public.app-category.developer-tools"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "build/icons/icon.ico",
+      "uninstallerIcon": "build/icons/icon.ico",
+      "installerHeaderIcon": "build/icons/icon.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "DeepSeek Harness Desktop"
+    }
   }
 }
