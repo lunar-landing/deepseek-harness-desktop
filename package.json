@@ -25,7 +25,8 @@
   "devDependencies": {
     "electron": "^43.4.0",
     "electron-builder": "^24.13.3",
-    "electron-packager": "^17.1.2"
+    "electron-packager": "^17.1.2",
+    "sharp": "^0.33.2"
   },
   "build": {
     "appId": "com.deepseek.harness-desktop",
