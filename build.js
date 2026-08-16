@@ -6,26 +6,61 @@ const path = require('path');
 // 获取当前操作系统
 const platform = os.platform();
 
-console.log(`Building for platform: ${platform}`);
+// 根据操作系统选择构建平台
+let buildPlatform;
+let archiveName;
+if (platform === 'win32') {
+  buildPlatform = 'win32';
+  archiveName = 'DeepSeek-Harness-Desktop-Windows-x64-Portable.zip';
+} else if (platform === 'darwin') {
+  buildPlatform = 'darwin';
+  archiveName = 'DeepSeek-Harness-Desktop-macOS-x64.zip';
+} else {
+  console.error('Unsupported platform:', platform);
+  process.exit(1);
+}
+
+console.log(`Building for platform: ${buildPlatform}`);
 
 // 执行构建命令
 try {
-  execSync(`npm run build:${platform === 'win32' ? 'win' : 'mac'}`, {
+  execSync(`npm run build:${buildPlatform === 'win32' ? 'win' : 'mac'}`, {
     stdio: 'inherit'
   });
   console.log('Build completed successfully!');
   
-  // electron-builder 输出目录
+  // 压缩构建产物
   const distDir = path.join(__dirname, 'dist');
+  const buildDir = path.join(distDir, `DeepSeek-Harness-Desktop-${buildPlatform}-x64`);
   
-  // 列出构建产物
-  console.log('\nBuild artifacts:');
-  const files = fs.readdirSync(distDir);
-  files.forEach(file => {
-    const filePath = path.join(distDir, file);
-    const stats = fs.statSync(filePath);
-    console.log(`  ${file} (${(stats.size / 1024 / 1024).toFixed(2)} MB)`);
-  });
+  if (fs.existsSync(buildDir)) {
+    console.log(`Creating archive: ${archiveName}`);
+    
+    // 使用 PowerShell 压缩文件夹（Windows）或 zip 命令（macOS/Linux）
+    if (platform === 'win32') {
+      execSync(`powershell -Command "Compress-Archive -Path '${buildDir}' -DestinationPath '${path.join(distDir, archiveName)}' -Force"`, {
+        stdio: 'inherit'
+      });
+    } else {
+      execSync(`cd "${distDir}" && zip -r "${archiveName}" "DeepSeek-Harness-Desktop-${buildPlatform}-x64"`, {
+        stdio: 'inherit'
+      });
+    }
+    
+    console.log(`Archive created: ${archiveName}`);
+  } else {
+    console.error('Build directory not found:', buildDir);
+    process.exit(1);
+  }
+  
+  // Windows 额外生成安装版
+  if (platform === 'win32') {
+    console.log('\nBuilding installer version...');
+    execSync('npm run build:win:installer', {
+      stdio: 'inherit'
+    });
+    console.log('Installer version created!');
+  }
   
 } catch (error) {
   console.error('Build failed:', error.message);

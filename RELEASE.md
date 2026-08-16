@@ -54,8 +54,10 @@ git push origin master --tags
 - **Windows Runner**：
   - 检出代码
   - 安装依赖
-  - 构建 Windows 版本
-  - 压缩为 `DeepSeek-Harness-Desktop-Windows-x64.zip`
+  - 构建便携版（electron-packager）
+  - 压缩为 `DeepSeek-Harness-Desktop-Windows-x64-Portable.zip`
+  - 构建安装版（electron-builder）
+  - 生成 `DeepSeek-Harness-Desktop-Setup-*.exe`
   - 上传到 Artifacts
 
 - **macOS Runner**：
@@ -77,8 +79,8 @@ git push origin master --tags
 2. 点击 **Actions** 标签
 3. 选择最新的构建记录
 4. 在页面底部 **Artifacts** 部分下载：
-   - `release-windows-latest-node22` → Windows 安装包
-   - `release-macos-latest-node22` → macOS 安装包
+   - `release-windows-latest` → Windows 安装包（便携版 + 安装版）
+   - `release-macos-latest` → macOS 安装包
 
 ### 方式二：从 Releases 下载（正式版本）
 
@@ -86,22 +88,28 @@ git push origin master --tags
 2. 点击 **Releases** 标签
 3. 选择对应版本
 4. 下载：
-   - `DeepSeek-Harness-Desktop-Setup-*.exe` - Windows 安装包
-   - `DeepSeek-Harness-Desktop-*.dmg` - macOS 安装包
+   - **Windows 便携版**：`DeepSeek-Harness-Desktop-Windows-x64-Portable.zip`
+   - **Windows 安装版**：`DeepSeek-Harness-Desktop-Setup-*.exe`
+   - **macOS**：`DeepSeek-Harness-Desktop-macOS-x64.zip`
 
 ## 安装说明
 
-### Windows 用户
-1. 下载 `DeepSeek-Harness-Desktop-Setup-*.exe` 安装包
+### Windows 便携版
+1. 下载 `DeepSeek-Harness-Desktop-Windows-x64-Portable.zip`
+2. 解压缩到任意目录（如 `C:\Program Files\DeepSeek Harness Desktop`）
+3. 运行 `DeepSeek-Harness-Desktop.exe`
+4. （可选）创建桌面快捷方式
+
+### Windows 安装版
+1. 下载 `DeepSeek-Harness-Desktop-Setup-*.exe`
 2. 运行安装程序
-3. 选择安装目录（可选）
-4. 按提示完成安装
-5. 安装完成后自动创建桌面快捷方式和开始菜单快捷方式
+3. 按提示完成安装
+4. 从桌面或开始菜单启动
 
 ### macOS 用户
-1. 下载 `DeepSeek-Harness-Desktop-*.dmg` 安装包
-2. 打开 DMG 文件
-3. 将应用程序拖拽到 Applications 文件夹
+1. 下载 `DeepSeek-Harness-Desktop-macOS-x64.zip`
+2. 解压缩到任意目录
+3. 运行 `DeepSeek-Harness-Desktop.app`
 4. 如果提示"无法验证开发者"，请在 **系统偏好设置 → 安全性与隐私** 中允许运行
 
 ## 版本号规范

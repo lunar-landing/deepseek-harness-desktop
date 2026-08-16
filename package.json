@@ -1,6 +1,6 @@
 {
   "name": "deepseek-harness-desktop",
-  "version": "1.0.4",
+  "version": "1.0.3",
   "description": "DeepSeek Harness Desktop Client",
   "main": "main.js",
   "scripts": {
@@ -8,7 +8,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "create-icons": "node create-icons.js",
     "build": "npm run create-icons && node build.js",
-    "build:win": "npm run create-icons && electron-builder --win --publish never",
+    "build:win": "npm run create-icons && electron-packager . DeepSeek-Harness-Desktop --platform=win32 --arch=x64 --out=dist --overwrite --icon=build/icons/icon.ico",
+    "build:win:installer": "npm run create-icons && electron-builder --win --x64",
     "build:mac": "npm run create-icons && electron-packager . DeepSeek-Harness-Desktop --platform=darwin --arch=x64 --out=dist --overwrite --icon=build/icons/icon.icns",
     "release": "npm run build",
     "version": "npm version patch && git push origin main --tags"
