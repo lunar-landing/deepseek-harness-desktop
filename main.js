@@ -23,14 +23,22 @@ function createWindow() {
     backgroundColor: '#0a0c10',
     borderColor: '#0a0c10',
     webPreferences: {
-      nodeIntegration: true,              // loading.html 需要
-      contextIsolation: false,
-      preload: path.join(__dirname, 'preload.js')
+      nodeIntegration: true,
+      contextIsolation: false
+      // 不加载 preload.js，loading.html 直接用 require('electron')
     }
   })
 
   // 先加载本地 loading 页面
-  mainWindow.loadFile(path.join(__dirname, 'loading.html'))
+  mainWindow.loadFile(path.join(__dirname, 'loading.html')).catch(err => {
+    console.error('Failed to load loading.html:', err)
+  })
+
+  // 加载失败时也显示窗口，避免黑屏
+  mainWindow.webContents.on('did-fail-load', (e, code, desc) => {
+    console.error('Page load failed:', code, desc)
+    mainWindow.show()
+  })
 
   // loading.html 加载完毕后显示窗口（此时服务还没就绪，用户看到的就是 loading 界面）
   mainWindow.once('ready-to-show', () => {
@@ -142,10 +150,14 @@ function startDshServer() {
     })
 
     dshProcess.stderr.on('data', (data) => {
-      console.error(`dsh stderr: ${data}`)
       const msg = data.toString()
-      if (msg.includes('installed') || msg.includes('Downloading')) {
-        updateLoadingStatus('正在下载依赖，请耐心等待…')
+      console.error(`dsh stderr: ${msg}`)
+      // npx 下载进度信息实时传递
+      if (msg.includes('installed') || msg.includes('Downloading') || msg.includes('added') || msg.includes('npm warn')) {
+        // 提取关键信息，截断过长的行
+        const line = msg.split('\n').find(l => l.trim()) || msg
+        const display = line.length > 80 ? line.substring(0, 80) + '…' : line
+        updateLoadingStatus(display.trim())
       }
     })
 
