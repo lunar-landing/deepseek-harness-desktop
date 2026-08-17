@@ -1,6 +1,6 @@
 {
   "name": "deepseek-harness-desktop",
-  "version": "1.1.3",
+  "version": "1.2.0",
   "description": "DeepSeek Harness Desktop Client",
   "main": "main.js",
   "scripts": {
