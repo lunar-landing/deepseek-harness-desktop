@@ -33,7 +33,6 @@ jobs:
         run: |
           mkdir -p _site
           cp -r docs/* _site/
-          cp logo.svg _site/ 2>/dev/null || true
           
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
