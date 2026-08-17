@@ -335,33 +335,79 @@
         }
 
         .feature {
-            background: var(--surface);
+            position: relative;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.02));
             border: 1px solid var(--border);
             border-radius: var(--radius);
             padding: 28px 24px;
-            transition: all 0.2s ease;
+            transition: all 0.25s ease;
+            overflow: hidden;
+        }
+
+        /* 顶部高光线 */
+        .feature::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 12%;
+            right: 12%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(79, 140, 255, 0), transparent);
+            transition: background 0.25s ease;
+        }
+
+        /* 悬停光斑 */
+        .feature::after {
+            content: "";
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 220px;
+            height: 120px;
+            background: radial-gradient(ellipse at center, rgba(79, 140, 255, 0.14), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
         }
 
         .feature:hover {
-            background: var(--surface-hover);
-            border-color: var(--border-strong);
+            border-color: rgba(79, 140, 255, 0.35);
             transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature:hover::before {
+            background: linear-gradient(90deg, transparent, rgba(79, 140, 255, 0.7), transparent);
+        }
+
+        .feature:hover::after {
+            opacity: 1;
         }
 
         .feature .icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 11px;
-            background: rgba(79, 140, 255, 0.1);
-            border: 1px solid rgba(79, 140, 255, 0.18);
+            position: relative;
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            background: linear-gradient(145deg, rgba(79, 140, 255, 0.16), rgba(79, 140, 255, 0.05));
+            border: 1px solid rgba(79, 140, 255, 0.22);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 21px;
             margin-bottom: 18px;
+            box-shadow: 0 0 18px rgba(79, 140, 255, 0.1) inset;
+            transition: all 0.25s ease;
+        }
+
+        .feature:hover .icon {
+            border-color: rgba(79, 140, 255, 0.45);
+            box-shadow: 0 0 20px rgba(79, 140, 255, 0.25);
         }
 
         .feature h3 {
+            position: relative;
             font-size: 16px;
             font-weight: 600;
             letter-spacing: -0.01em;
@@ -369,6 +415,7 @@
         }
 
         .feature p {
+            position: relative;
             font-size: 14px;
             color: var(--text-2);
             line-height: 1.65;
@@ -389,33 +436,63 @@
         }
 
         .platform {
-            background: var(--surface);
+            position: relative;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.02));
             border: 1px solid var(--border);
             border-radius: 18px;
-            padding: 36px 28px;
+            padding: 40px 28px 32px;
             text-align: center;
-            transition: all 0.2s ease;
+            transition: all 0.25s ease;
+            overflow: hidden;
+        }
+
+        .platform::before {
+            content: "";
+            position: absolute;
+            top: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 280px;
+            height: 160px;
+            background: radial-gradient(ellipse at center, rgba(79, 140, 255, 0.12), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
         }
 
         .platform:hover {
-            background: var(--surface-hover);
-            border-color: var(--border-strong);
+            border-color: rgba(79, 140, 255, 0.35);
+            transform: translateY(-3px);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+        }
+
+        .platform:hover::before {
+            opacity: 1;
         }
 
         .platform .p-icon {
-            width: 56px;
-            height: 56px;
-            margin: 0 auto 18px;
-            border-radius: 14px;
-            background: rgba(79, 140, 255, 0.1);
-            border: 1px solid rgba(79, 140, 255, 0.18);
+            position: relative;
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px;
+            border-radius: 16px;
+            background: linear-gradient(145deg, rgba(79, 140, 255, 0.16), rgba(79, 140, 255, 0.05));
+            border: 1px solid rgba(79, 140, 255, 0.22);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 26px;
+            font-size: 28px;
+            box-shadow: 0 0 24px rgba(79, 140, 255, 0.12) inset;
+            transition: all 0.25s ease;
+        }
+
+        .platform:hover .p-icon {
+            border-color: rgba(79, 140, 255, 0.45);
+            box-shadow: 0 0 28px rgba(79, 140, 255, 0.3);
         }
 
         .platform h3 {
+            position: relative;
             font-size: 19px;
             font-weight: 600;
             letter-spacing: -0.01em;
@@ -423,12 +500,14 @@
         }
 
         .platform .p-desc {
+            position: relative;
             font-size: 13px;
             color: var(--text-3);
-            margin-bottom: 22px;
+            margin-bottom: 24px;
         }
 
         .platform .btn {
+            position: relative;
             width: 100%;
             justify-content: center;
             padding: 11px 20px;
@@ -436,6 +515,21 @@
         }
 
         .platform .btn + .btn { margin-top: 10px; }
+
+        /* 推荐角标 */
+        .rec-badge {
+            display: inline-flex;
+            align-items: center;
+            margin-left: 8px;
+            padding: 1px 8px;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--accent);
+            background: rgba(79, 140, 255, 0.12);
+            border: 1px solid rgba(79, 140, 255, 0.25);
+            border-radius: 100px;
+            vertical-align: middle;
+        }
 
         .note {
             max-width: 720px;
@@ -651,8 +745,8 @@
                         <div class="p-icon">🪟</div>
                         <h3>Windows</h3>
                         <p class="p-desc">Windows 10 及以上 · x64</p>
-                        <a href="https://github.com/lunar-landing/deepseek-harness-desktop/releases/latest" class="btn btn-primary" target="_blank" rel="noopener">下载安装版</a>
-                        <a href="https://github.com/lunar-landing/deepseek-harness-desktop/releases/latest" class="btn btn-ghost" target="_blank" rel="noopener">下载便携版</a>
+                        <a href="https://github.com/lunar-landing/deepseek-harness-desktop/releases/latest" class="btn btn-primary" target="_blank" rel="noopener">下载安装版<span class="rec-badge">推荐</span></a>
+                        <a href="https://github.com/lunar-landing/deepseek-harness-desktop/releases/latest" class="btn btn-ghost" target="_blank" rel="noopener">下载便携版（免安装）</a>
                     </div>
                 </div>
                 <div class="note reveal">
