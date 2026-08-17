@@ -400,28 +400,28 @@ ipcMain.on('loading:exit', () => {
 async function bootApp() {
   try {
     const isRunning = await checkServerRunning()
-    
+
     if (isRunning) {
-      console.log('Server already running, creating window...')
+      console.log('Server already running')
       updateLoadingStatus('服务已就绪，正在加载…')
-      // 服务已就绪，短暂展示后切换
-      setTimeout(() => createWindow(), 300)
     } else {
       await startDshServer()
-      console.log('Server started, creating window...')
+      console.log('Server started')
       updateLoadingStatus('服务已就绪，正在加载…')
-      setTimeout(() => createWindow(), 300)
     }
+
+    // 服务已就绪（上面 await 已确认），立即创建主窗口
+    createWindow()
+
   } catch (error) {
     console.error('Failed to start server:', error)
     showLoadingError(error.message || '服务启动失败')
   }
 }
 
-app.whenReady().then(() => {
-  // 立刻显示加载窗口，不等服务
-  createLoadingWindow()
-  // 然后在后台启动服务
+app.whenReady().then(async () => {
+  // 立刻创建加载窗口，等渲染完毕后再启动后端
+  await createLoadingWindow()
   bootApp()
 })
 
