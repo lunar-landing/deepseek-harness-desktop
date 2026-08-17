@@ -4,323 +4,131 @@ const { spawn } = require('child_process')
 const http = require('http')
 
 let mainWindow
-let loadingWindow
 let dshProcess
 
 // ============================================
-// Loading Window - 立即显示
+// 创建主窗口（启动时先显示 loading.html）
 // ============================================
-function createLoadingWindow() {
-  loadingWindow = new BrowserWindow({
-    width: 420,
-    height: 320,
-    frame: false,
-    transparent: false,
-    resizable: false,
-    backgroundColor: '#0a0c10',
-    webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false
-    }
-  })
-
-  const loadingHTML = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "PingFang SC", sans-serif;
-      background: #0a0c10;
-      color: #e8eaf0;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      user-select: none;
-      -webkit-app-region: drag;
-      overflow: hidden;
-      position: relative;
-    }
-    /* 网格背景 */
-    body::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-      background-size: 40px 40px;
-      pointer-events: none;
-    }
-    /* 顶部光晕 */
-    body::after {
-      content: "";
-      position: absolute;
-      top: -100px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 500px;
-      height: 300px;
-      background: radial-gradient(ellipse at center, rgba(79,140,255,0.15), transparent 65%);
-      pointer-events: none;
-    }
-    .loading-logo {
-      width: 48px;
-      height: 48px;
-      margin-bottom: 24px;
-      position: relative;
-      z-index: 1;
-    }
-    .loading-title {
-      font-size: 18px;
-      font-weight: 600;
-      letter-spacing: -0.01em;
-      margin-bottom: 6px;
-      position: relative;
-      z-index: 1;
-    }
-    .loading-sub {
-      font-size: 13px;
-      color: #9aa1b2;
-      margin-bottom: 32px;
-      position: relative;
-      z-index: 1;
-    }
-    /* 旋转加载器 */
-    .spinner {
-      position: relative;
-      z-index: 1;
-      width: 36px;
-      height: 36px;
-      margin-bottom: 16px;
-    }
-    .spinner-ring {
-      width: 100%;
-      height: 100%;
-      border: 2.5px solid rgba(255,255,255,0.08);
-      border-top-color: #4f8cff;
-      border-radius: 50%;
-      animation: spin 0.9s linear infinite;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    .loading-status {
-      font-size: 13px;
-      color: #5d6577;
-      position: relative;
-      z-index: 1;
-      min-height: 20px;
-      transition: color 0.2s;
-    }
-    /* 错误状态 */
-    .error-icon {
-      display: none;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: rgba(239,68,68,0.1);
-      border: 1px solid rgba(239,68,68,0.2);
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      margin-bottom: 20px;
-      position: relative;
-      z-index: 1;
-    }
-    .error-actions {
-      display: none;
-      gap: 12px;
-      position: relative;
-      z-index: 1;
-      margin-top: 8px;
-    }
-    .error-actions button {
-      -webkit-app-region: no-drag;
-      padding: 8px 20px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      border: none;
-      transition: all 0.15s;
-    }
-    .btn-retry {
-      background: #e8eaf0;
-      color: #0a0c10;
-    }
-    .btn-retry:hover { background: #fff; }
-    .btn-exit {
-      background: rgba(255,255,255,0.05);
-      color: #9aa1b2;
-      border: 1px solid rgba(255,255,255,0.1) !important;
-    }
-    .btn-exit:hover { background: rgba(255,255,255,0.1); color: #e8eaf0; }
-    /* 状态切换 */
-    body.state-error .spinner { display: none; }
-    body.state-error .loading-logo { display: none; }
-    body.state-error .error-icon { display: flex; }
-    body.state-error .error-actions { display: flex; }
-    body.state-error .loading-status { color: #f87171; }
-  </style>
-</head>
-<body>
-  <svg width="48" height="44" viewBox="-1 -1 29 25" fill="none" class="loading-logo">
-    <path d="M26.5174 3.39471C26.235 3.2567 26.1137 3.52006 25.9487 3.65346C25.8923 3.69659 25.8446 3.75294 25.7969 3.80469C25.3846 4.24516 24.9027 4.53439 24.2737 4.49989C23.3536 4.44814 22.5682 4.73737 21.8735 5.44119C21.7258 4.57349 21.2353 4.0554 20.4889 3.72304C20.0985 3.55054 19.7034 3.37746 19.4297 3.00197C19.2388 2.73459 19.1865 2.43673 19.091 2.14289C19.0301 1.96579 18.9697 1.78466 18.7656 1.75418C18.5442 1.71968 18.4574 1.90541 18.3705 2.06067C18.0232 2.69549 17.8887 3.39471 17.9019 4.10313C17.9324 5.6965 18.6051 6.96556 19.9421 7.86834C20.0939 7.97184 20.133 8.07535 20.0852 8.22658C19.9938 8.53766 19.8857 8.83955 19.7903 9.15063C19.7293 9.34901 19.6384 9.39271 19.4257 9.30588C18.692 8.9994 18.0583 8.54571 17.4982 7.99772C16.5477 7.07827 15.6881 6.06336 14.6162 5.26869C14.3644 5.08296 14.1125 4.91045 13.8521 4.746C12.7584 3.68394 13.9952 2.81164 14.2816 2.70814C14.5812 2.60003 14.3857 2.22857 13.4179 2.23317C12.4502 2.2372 11.5646 2.56151 10.4359 2.99335C10.2708 3.05832 10.0972 3.10547 9.91951 3.14457C8.8954 2.95022 7.83162 2.90709 6.72069 3.03245C4.62877 3.26533 2.95777 4.25436 1.72954 5.94261C0.254043 7.97184 -0.0932678 10.2777 0.33167 12.6824C0.778458 15.2171 2.07225 17.3153 4.06008 18.9558C6.12152 20.6567 8.49577 21.4905 11.2047 21.3306C12.8498 21.2358 14.6812 21.0155 16.7473 19.2669C17.2682 19.5262 17.8151 19.6297 18.7219 19.7074C19.4205 19.7723 20.0933 19.6729 20.6143 19.5648C21.4302 19.3923 21.3739 18.6367 21.0789 18.4981C18.6874 17.3843 19.2124 17.8374 18.7351 17.4706C19.9501 16.033 21.8063 13.4776 22.379 9.99821C22.4353 9.61409 22.5072 9.073 22.4986 8.76192C22.494 8.57216 22.5377 8.49856 22.7545 8.47671C23.3536 8.40771 23.935 8.24383 24.4692 7.94999C26.0188 7.10357 26.6439 5.71318 26.7911 4.04678C26.8129 3.79204 26.7865 3.52869 26.5174 3.39471ZM13.0143 18.3946C10.6964 16.5724 9.5722 15.9726 9.10816 15.9985C8.67402 16.0244 8.75222 16.5212 8.84768 16.8449C8.94773 17.1646 9.07768 17.3849 9.25996 17.6655C9.38589 17.8512 9.47272 18.1272 9.13404 18.3348C8.38766 18.7965 7.08985 18.1796 7.0289 18.1491C5.51833 17.2595 4.25559 16.0853 3.36546 14.4793C2.50581 12.9337 2.0067 11.2753 1.92447 9.50542C1.90262 9.07818 2.02855 8.92695 2.45406 8.84932C3.01413 8.74582 3.59144 8.72397 4.15093 8.80619C6.51656 9.15178 8.53027 10.2092 10.2185 11.8848C11.1822 12.8388 11.9114 13.979 12.6623 15.0929C13.461 16.2757 14.3201 17.4027 15.4144 18.3268C15.8008 18.6505 16.109 18.8966 16.404 19.0783C15.5144 19.1778 14.0297 19.1991 13.0143 18.3958V18.3946ZM14.1252 11.2489C14.1252 11.0591 14.277 10.9079 14.4679 10.9079C14.511 10.9079 14.5501 10.9165 14.5852 10.9292C14.6329 10.9464 14.6766 10.9723 14.7111 11.0114C14.7721 11.0718 14.8066 11.158 14.8066 11.2489C14.8066 11.4386 14.6548 11.5899 14.4639 11.5899C14.273 11.5899 14.1252 11.4386 14.1252 11.2489ZM17.5759 13.0188C17.3545 13.1096 17.1331 13.1873 16.9203 13.1959C16.5903 13.2131 16.2303 13.0791 16.0348 12.9153C15.7312 12.6605 15.5139 12.5179 15.423 12.0734C15.3839 11.8837 15.4057 11.5899 15.4402 11.4214C15.5185 11.0585 15.4316 10.8257 15.1757 10.614C14.9676 10.4415 14.7025 10.3938 14.4115 10.3938C14.3029 10.3938 14.2034 10.3461 14.1292 10.3076C14.0079 10.2472 13.9078 10.096 14.0033 9.91023C14.0338 9.84985 14.1815 9.70322 14.216 9.67734C14.6111 9.45251 15.0665 9.52612 15.488 9.6946C15.8784 9.85445 16.174 10.1477 16.5989 10.5623C17.033 11.0631 17.1112 11.2011 17.3585 11.5772C17.554 11.871 17.7317 12.1729 17.8536 12.5185C17.9272 12.7341 17.8317 12.9107 17.5759 13.0188Z" fill="#ffffff"/>
-  </svg>
-  <div class="loading-title">DeepSeek Harness 桌面端</div>
-  <div class="loading-sub">正在启动，请稍候…</div>
-  <div class="spinner"><div class="spinner-ring"></div></div>
-  <div class="loading-status">正在连接服务…</div>
-  <div class="error-icon">✕</div>
-  <div class="error-actions">
-    <button class="btn-retry" onclick="retry()">重试</button>
-    <button class="btn-exit" onclick="exit()">退出</button>
-  </div>
-  <script>
-    const { ipcRenderer } = require('electron');
-    function retry() { ipcRenderer.send('loading:retry'); }
-    function exit() { ipcRenderer.send('loading:exit'); }
-    ipcRenderer.on('loading:status', (_, msg) => {
-      document.querySelector('.loading-status').textContent = msg;
-    });
-    ipcRenderer.on('loading:error', (_, msg) => {
-      document.body.classList.add('state-error');
-      document.querySelector('.loading-status').textContent = msg || '服务启动失败';
-    });
-  </script>
-</body>
-</html>
-  `
-
-  loadingWindow.loadURL(`data:text/html,${encodeURIComponent(loadingHTML)}`)
-
-  loadingWindow.on('closed', () => {
-    loadingWindow = null
-  })
-}
-
-function updateLoadingStatus(msg) {
-  if (loadingWindow && !loadingWindow.isDestroyed()) {
-    loadingWindow.webContents.send('loading:status', msg)
-  }
-}
-
-function showLoadingError(msg) {
-  if (loadingWindow && !loadingWindow.isDestroyed()) {
-    loadingWindow.webContents.send('loading:error', msg)
-  }
-}
-
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
+    show: false,                          // 先隐藏，等加载完毕再显示
     titleBarStyle: 'hidden',
     titleBarOverlay: {
       color: '#FFFFFF',
       symbolColor: '#000000',
       height: 30
     },
-    backgroundColor: '#FFFFFF',
-    borderColor: '#FFFFFF',
+    backgroundColor: '#0a0c10',
+    borderColor: '#0a0c10',
     webPreferences: {
-      nodeIntegration: false,
-      contextIsolation: true,
-      enableRemoteModule: false,
+      nodeIntegration: true,              // loading.html 需要
+      contextIsolation: false,
       preload: path.join(__dirname, 'preload.js')
     }
   })
 
-  // 加载本地文件或URL
-  mainWindow.loadURL('http://127.0.0.1:3080')
-  
-  // 注入CSS和HTML以适配隐藏的标题栏
-  mainWindow.webContents.on('did-finish-load', () => {
-    const css = `
-      body {
-        padding-top: 30px; /* 为标题栏留出空间 */
-        margin: 0;
-        box-sizing: border-box;
-      }
-      /* 确保内容不会被标题栏覆盖 */
-      * {
-        box-sizing: border-box;
-      }
-      /* 创建可拖动的标题栏区域 */
-      .titlebar-drag-region {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 30px;
-        -webkit-app-region: drag;
-        z-index: 9999;
-        pointer-events: auto;
-        background: transparent;
-      }
-      /* 确保按钮仍然可以点击 */
-      .titlebar-drag-region button,
-      .titlebar-drag-region a,
-      .titlebar-drag-region input,
-      .titlebar-drag-region select,
-      .titlebar-drag-region textarea {
-        -webkit-app-region: no-drag;
-        pointer-events: auto;
-      }
-    `
-    
-    const html = `
-      <div class="titlebar-drag-region"></div>
-    `
-    
-    mainWindow.webContents.insertCSS(css)
-    mainWindow.webContents.executeJavaScript(`
-      document.body.insertAdjacentHTML('afterbegin', ${JSON.stringify(html.trim())});
-    `)
+  // 先加载本地 loading 页面
+  mainWindow.loadFile(path.join(__dirname, 'loading.html'))
+
+  // loading.html 加载完毕后显示窗口（此时服务还没就绪，用户看到的就是 loading 界面）
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show()
   })
 
-  // 打开开发者工具（可选）
-  // mainWindow.webContents.openDevTools()
-
-  mainWindow.on('closed', function () {
-    mainWindow = null
-  })
-
-  // 主窗口就绪后关闭加载窗口
+  // 注入标题栏拖动区域（切到远程页面后生效）
   mainWindow.webContents.on('did-finish-load', () => {
-    if (loadingWindow && !loadingWindow.isDestroyed()) {
-      loadingWindow.close()
+    const url = mainWindow.webContents.getURL()
+    // 只在远程页面注入，不在本地 loading 页面注入
+    if (url.startsWith('http')) {
+      mainWindow.webContents.insertCSS(`
+        body {
+          padding-top: 30px;
+          margin: 0;
+          box-sizing: border-box;
+        }
+        * { box-sizing: border-box; }
+        .titlebar-drag-region {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 30px;
+          -webkit-app-region: drag;
+          z-index: 9999;
+          pointer-events: auto;
+          background: transparent;
+        }
+        .titlebar-drag-region button,
+        .titlebar-drag-region a,
+        .titlebar-drag-region input,
+        .titlebar-drag-region select,
+        .titlebar-drag-region textarea {
+          -webkit-app-region: no-drag;
+          pointer-events: auto;
+        }
+      `)
+      mainWindow.webContents.executeJavaScript(`
+        document.body.insertAdjacentHTML('afterbegin', '<div class="titlebar-drag-region"></div>');
+      `)
     }
+  })
+
+  mainWindow.on('closed', () => {
+    mainWindow = null
   })
 }
 
+// ============================================
+// IPC: loading.html 的重试和退出按钮
+// ============================================
+ipcMain.on('loading:retry', () => {
+  bootApp()
+})
+
+ipcMain.on('loading:exit', () => {
+  app.quit()
+})
+
+// 向 loading.html 发送状态更新
+function updateLoadingStatus(msg) {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('loading:status', msg)
+  }
+}
+
+function showLoadingError(msg) {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('loading:error', msg)
+  }
+}
+
+// ============================================
+// 检测服务是否已运行
+// ============================================
 function checkServerRunning() {
   return new Promise((resolve) => {
     const req = http.get('http://127.0.0.1:3080', (res) => {
       console.log('Server is already running')
       resolve(true)
     })
-    
-    req.on('error', (err) => {
+    req.on('error', () => {
       console.log('Server is not running')
       resolve(false)
     })
-    
     req.end()
   })
 }
 
+// ============================================
+// 启动 dsh 服务并轮询直到就绪
+// ============================================
 function startDshServer() {
   return new Promise((resolve, reject) => {
     console.log('Starting DeepSeek Harness server...')
     updateLoadingStatus('正在启动 DeepSeek Harness 服务…')
-    
-    // 启动dsh web服务器
+
     dshProcess = spawn('npx', ['@deepseek-ai/dsh', 'web', '--port', '3080'], {
       stdio: 'pipe',
       shell: true
@@ -328,7 +136,6 @@ function startDshServer() {
 
     dshProcess.stdout.on('data', (data) => {
       console.log(`dsh stdout: ${data}`)
-      // 检查服务器是否启动
       if (data.toString().includes('Listening on')) {
         resolve()
       }
@@ -336,7 +143,6 @@ function startDshServer() {
 
     dshProcess.stderr.on('data', (data) => {
       console.error(`dsh stderr: ${data}`)
-      // npx 下载包时的进度信息也显示出来
       const msg = data.toString()
       if (msg.includes('installed') || msg.includes('Downloading')) {
         updateLoadingStatus('正在下载依赖，请耐心等待…')
@@ -350,49 +156,31 @@ function startDshServer() {
       }
     })
 
-    // 设置超时（90秒，给 npx 足够的下载时间）
+    // 90 秒超时
     setTimeout(() => {
       reject(new Error('服务启动超时，请检查网络连接'))
     }, 90000)
 
-    // 轮询端口是否可用
+    // 轮询端口
     let attempts = 0
     const checkPort = () => {
       attempts++
-      const req = http.get('http://127.0.0.1:3080', (res) => {
+      const req = http.get('http://127.0.0.1:3080', () => {
         console.log('Server is responding')
         resolve()
       })
-      
-      req.on('error', (err) => {
+      req.on('error', () => {
         console.log(`Waiting for server... (${attempts})`)
         if (attempts % 5 === 0) {
           updateLoadingStatus(`正在等待服务响应… (${attempts}s)`)
         }
         setTimeout(checkPort, 1000)
       })
-      
       req.end()
     }
-    
     setTimeout(checkPort, 2000)
   })
 }
-
-// ============================================
-// IPC: 加载窗口的重试和退出
-// ============================================
-ipcMain.on('loading:retry', () => {
-  if (loadingWindow && !loadingWindow.isDestroyed()) {
-    // 重置 UI 状态
-    loadingWindow.webContents.reload()
-  }
-  setTimeout(() => bootApp(), 300)
-})
-
-ipcMain.on('loading:exit', () => {
-  app.quit()
-})
 
 // ============================================
 // 主启动流程
@@ -401,17 +189,16 @@ async function bootApp() {
   try {
     const isRunning = await checkServerRunning()
 
-    if (isRunning) {
-      console.log('Server already running')
-      updateLoadingStatus('服务已就绪，正在加载…')
-    } else {
+    if (!isRunning) {
       await startDshServer()
       console.log('Server started')
-      updateLoadingStatus('服务已就绪，正在加载…')
+    } else {
+      console.log('Server already running')
     }
 
-    // 服务已就绪（上面 await 已确认），立即创建主窗口
-    createWindow()
+    // 服务已就绪，同一个窗口切换到远程地址
+    updateLoadingStatus('服务已就绪，正在加载…')
+    mainWindow.loadURL('http://127.0.0.1:3080')
 
   } catch (error) {
     console.error('Failed to start server:', error)
@@ -419,30 +206,26 @@ async function bootApp() {
   }
 }
 
-app.whenReady().then(async () => {
-  // 立刻创建加载窗口，等渲染完毕后再启动后端
-  await createLoadingWindow()
+app.whenReady().then(() => {
+  createWindow()
   bootApp()
 })
 
-app.on('window-all-closed', function () {
-  // 关闭dsh服务器（只有在我们启动的情况下才关闭）
+app.on('window-all-closed', () => {
   if (dshProcess) {
     dshProcess.kill()
   }
-  
   if (process.platform !== 'darwin') {
     app.quit()
   }
 })
 
-app.on('activate', function () {
+app.on('activate', () => {
   if (mainWindow === null) {
     createWindow()
   }
 })
 
-// 处理应用程序退出
 app.on('before-quit', () => {
   if (dshProcess) {
     dshProcess.kill()
