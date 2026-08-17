@@ -8,15 +8,15 @@
     <link rel="icon" type="image/svg+xml" href="logo.svg">
     <style>
         :root {
-            --bg: #fcfcfd;
-            --surface: #ffffff;
-            --surface-dim: #f4f4f6;
-            --text: #18181b;
-            --text-2: #52525b;
-            --text-3: #a1a1aa;
-            --border: rgba(0, 0, 0, 0.08);
-            --border-strong: rgba(0, 0, 0, 0.14);
-            --accent: #2563eb;
+            --bg: #0a0c10;
+            --surface: rgba(255, 255, 255, 0.03);
+            --surface-hover: rgba(255, 255, 255, 0.05);
+            --text: #e8eaf0;
+            --text-2: #9aa1b2;
+            --text-3: #5d6577;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-strong: rgba(255, 255, 255, 0.14);
+            --accent: #4f8cff;
             --radius: 14px;
         }
 
@@ -33,10 +33,26 @@
             overflow-x: hidden;
         }
 
+        /* 科技网格背景 */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+            background-size: 56px 56px;
+            mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 40%, transparent 100%);
+            -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 40%, transparent 100%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
         .container {
             max-width: 1000px;
             margin: 0 auto;
             padding: 0 24px;
+            position: relative;
         }
 
         /* ===== Header ===== */
@@ -46,7 +62,7 @@
             left: 0;
             right: 0;
             z-index: 100;
-            background: rgba(252, 252, 253, 0.72);
+            background: rgba(10, 12, 16, 0.7);
             backdrop-filter: saturate(180%) blur(16px);
             -webkit-backdrop-filter: saturate(180%) blur(16px);
             border-bottom: 1px solid var(--border);
@@ -71,7 +87,7 @@
         }
 
         .logo img {
-            height: 24px;
+            height: 22px;
             width: auto;
         }
 
@@ -105,19 +121,31 @@
             text-align: center;
         }
 
+        /* 顶部光晕 */
         .hero::before {
             content: "";
             position: absolute;
-            top: -120px;
+            top: -180px;
             left: 50%;
             transform: translateX(-50%);
-            width: 900px;
-            height: 500px;
-            background: radial-gradient(ellipse at center, rgba(37, 99, 235, 0.10) 0%, rgba(37, 99, 235, 0) 65%);
+            width: 860px;
+            height: 520px;
+            background: radial-gradient(ellipse at center, rgba(79, 140, 255, 0.16) 0%, rgba(79, 140, 255, 0) 65%);
             pointer-events: none;
         }
 
-        .hero > .container { position: relative; }
+        /* 顶部水平光线 */
+        .hero::after {
+            content: "";
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(79, 140, 255, 0.5), transparent);
+            pointer-events: none;
+        }
 
         .badge {
             display: inline-flex;
@@ -130,7 +158,6 @@
             font-size: 13px;
             color: var(--text-2);
             margin-bottom: 28px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
             animation: fadeUp 0.6s ease both;
         }
 
@@ -138,8 +165,8 @@
             width: 7px;
             height: 7px;
             border-radius: 50%;
-            background: #22c55e;
-            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+            background: #34d399;
+            box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.15);
         }
 
         h1 {
@@ -152,7 +179,7 @@
         }
 
         h1 .gradient {
-            background: linear-gradient(120deg, #18181b 30%, #2563eb 70%, #7c3aed 100%);
+            background: linear-gradient(120deg, #e8eaf0 20%, #4f8cff 65%, #7db2ff 100%);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -190,15 +217,15 @@
 
         .btn svg { width: 17px; height: 17px; }
 
-        .btn-dark {
+        .btn-primary {
             background: var(--text);
-            color: #fff;
+            color: var(--bg);
         }
 
-        .btn-dark:hover {
-            background: #000;
+        .btn-primary:hover {
+            background: #fff;
             transform: translateY(-1px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+            box-shadow: 0 8px 28px rgba(79, 140, 255, 0.25);
         }
 
         .btn-ghost {
@@ -208,7 +235,7 @@
         }
 
         .btn-ghost:hover {
-            background: var(--surface-dim);
+            background: var(--surface-hover);
             transform: translateY(-1px);
         }
 
@@ -240,10 +267,9 @@
             border-radius: 16px;
             overflow: hidden;
             box-shadow:
-                0 0 0 1px rgba(0, 0, 0, 0.02),
-                0 2px 4px rgba(0, 0, 0, 0.02),
-                0 12px 24px rgba(0, 0, 0, 0.04),
-                0 32px 64px rgba(0, 0, 0, 0.08);
+                0 0 0 1px rgba(79, 140, 255, 0.06),
+                0 24px 80px rgba(0, 0, 0, 0.5),
+                0 0 120px rgba(79, 140, 255, 0.08);
         }
 
         .shot-bar {
@@ -251,7 +277,7 @@
             align-items: center;
             gap: 8px;
             padding: 14px 18px;
-            background: linear-gradient(#fbfbfc, #f5f5f7);
+            background: rgba(255, 255, 255, 0.03);
             border-bottom: 1px solid var(--border);
         }
 
@@ -260,6 +286,7 @@
             height: 12px;
             border-radius: 50%;
             display: block;
+            opacity: 0.85;
         }
 
         .shot-bar i:nth-child(1) { background: #ff5f57; }
@@ -283,7 +310,7 @@
             font-size: 13px;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.1em;
             color: var(--accent);
             margin-bottom: 12px;
         }
@@ -316,8 +343,8 @@
         }
 
         .feature:hover {
+            background: var(--surface-hover);
             border-color: var(--border-strong);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
             transform: translateY(-3px);
         }
 
@@ -325,8 +352,8 @@
             width: 44px;
             height: 44px;
             border-radius: 11px;
-            background: var(--surface-dim);
-            border: 1px solid var(--border);
+            background: rgba(79, 140, 255, 0.1);
+            border: 1px solid rgba(79, 140, 255, 0.18);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -349,8 +376,8 @@
 
         /* ===== Download ===== */
         .download-section {
-            background: linear-gradient(#f7f7f9, var(--bg));
             border-top: 1px solid var(--border);
+            background: linear-gradient(rgba(79, 140, 255, 0.03), transparent);
         }
 
         .platforms {
@@ -371,8 +398,8 @@
         }
 
         .platform:hover {
+            background: var(--surface-hover);
             border-color: var(--border-strong);
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.07);
         }
 
         .platform .p-icon {
@@ -380,8 +407,8 @@
             height: 56px;
             margin: 0 auto 18px;
             border-radius: 14px;
-            background: var(--surface-dim);
-            border: 1px solid var(--border);
+            background: rgba(79, 140, 255, 0.1);
+            border: 1px solid rgba(79, 140, 255, 0.18);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -535,7 +562,7 @@
                 <h1>DeepSeek Harness<br><span class="gradient">桌面端</span></h1>
                 <p class="subtitle">基于官方 DeepSeek Harness 构建的桌面端，开箱即用</p>
                 <div class="actions">
-                    <a href="https://github.com/lunar-landing/deepseek-harness-desktop/releases/latest" class="btn btn-dark" target="_blank" rel="noopener" id="dl-primary">
+                    <a href="https://github.com/lunar-landing/deepseek-harness-desktop/releases/latest" class="btn btn-primary" target="_blank" rel="noopener">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                             <polyline points="7 10 12 15 17 10"/>
@@ -618,13 +645,13 @@
                         <div class="p-icon">🍎</div>
                         <h3>macOS</h3>
                         <p class="p-desc">macOS 10.15 及以上</p>
-                        <a href="https://github.com/lunar-landing/deepseek-harness-desktop/releases/latest" class="btn btn-dark" target="_blank" rel="noopener">下载 macOS 版</a>
+                        <a href="https://github.com/lunar-landing/deepseek-harness-desktop/releases/latest" class="btn btn-primary" target="_blank" rel="noopener">下载 macOS 版</a>
                     </div>
                     <div class="platform reveal">
                         <div class="p-icon">🪟</div>
                         <h3>Windows</h3>
                         <p class="p-desc">Windows 10 及以上 · x64</p>
-                        <a href="https://github.com/lunar-landing/deepseek-harness-desktop/releases/latest" class="btn btn-dark" target="_blank" rel="noopener">下载安装版</a>
+                        <a href="https://github.com/lunar-landing/deepseek-harness-desktop/releases/latest" class="btn btn-primary" target="_blank" rel="noopener">下载安装版</a>
                         <a href="https://github.com/lunar-landing/deepseek-harness-desktop/releases/latest" class="btn btn-ghost" target="_blank" rel="noopener">下载便携版</a>
                     </div>
                 </div>
@@ -649,7 +676,7 @@
     </footer>
 
     <script>
-        // 根据操作系统高亮主下载按钮文案
+        // 根据操作系统设置主下载按钮文案
         (function () {
             var ua = navigator.userAgent.toLowerCase();
             var text = document.getElementById('dl-primary-text');
