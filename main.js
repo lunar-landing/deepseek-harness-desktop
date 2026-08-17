@@ -10,81 +10,45 @@ let dshProcess
 // 创建主窗口（启动时先显示 loading.html）
 // ============================================
 function createWindow() {
-  mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
-    show: false,                          // 先隐藏，等加载完毕再显示
-    titleBarStyle: 'hidden',
-    titleBarOverlay: {
-      color: '#FFFFFF',
-      symbolColor: '#000000',
-      height: 30
-    },
-    backgroundColor: '#0a0c10',
-    borderColor: '#0a0c10',
-    webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false
-      // 不加载 preload.js，loading.html 直接用 require('electron')
-    }
-  })
+  return new Promise((resolve) => {
+    mainWindow = new BrowserWindow({
+      width: 1200,
+      height: 800,
+      show: false,
+      titleBarStyle: 'hidden',
+      titleBarOverlay: {
+        color: '#FFFFFF',
+        symbolColor: '#000000',
+        height: 30
+      },
+      backgroundColor: '#0a0c10',
+      borderColor: '#0a0c10',
+      webPreferences: {
+        nodeIntegration: true,
+        contextIsolation: false
+      }
+    })
 
-  // 先加载本地 loading 页面
-  mainWindow.loadFile(path.join(__dirname, 'loading.html')).catch(err => {
-    console.error('Failed to load loading.html:', err)
-  })
+    // loading.html 加载完毕后再启动 boot 流程
+    mainWindow.webContents.once('did-finish-load', () => {
+      mainWindow.show()
+      resolve()
+    })
 
-  // 加载失败时也显示窗口，避免黑屏
-  mainWindow.webContents.on('did-fail-load', (e, code, desc) => {
-    console.error('Page load failed:', code, desc)
-    mainWindow.show()
-  })
+    mainWindow.loadFile(path.join(__dirname, 'loading.html')).catch(err => {
+      console.error('Failed to load loading.html:', err)
+      mainWindow.show()
+      resolve()
+    })
 
-  // loading.html 加载完毕后显示窗口（此时服务还没就绪，用户看到的就是 loading 界面）
-  mainWindow.once('ready-to-show', () => {
-    mainWindow.show()
-  })
+    mainWindow.webContents.on('did-fail-load', (e, code, desc) => {
+      console.error('Page load failed:', code, desc)
+      mainWindow.show()
+    })
 
-  // 注入标题栏拖动区域（切到远程页面后生效）
-  mainWindow.webContents.on('did-finish-load', () => {
-    const url = mainWindow.webContents.getURL()
-    // 只在远程页面注入，不在本地 loading 页面注入
-    if (url.startsWith('http')) {
-      mainWindow.webContents.insertCSS(`
-        body {
-          padding-top: 30px;
-          margin: 0;
-          box-sizing: border-box;
-        }
-        * { box-sizing: border-box; }
-        .titlebar-drag-region {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          height: 30px;
-          -webkit-app-region: drag;
-          z-index: 9999;
-          pointer-events: auto;
-          background: transparent;
-        }
-        .titlebar-drag-region button,
-        .titlebar-drag-region a,
-        .titlebar-drag-region input,
-        .titlebar-drag-region select,
-        .titlebar-drag-region textarea {
-          -webkit-app-region: no-drag;
-          pointer-events: auto;
-        }
-      `)
-      mainWindow.webContents.executeJavaScript(`
-        document.body.insertAdjacentHTML('afterbegin', '<div class="titlebar-drag-region"></div>');
-      `)
-    }
-  })
-
-  mainWindow.on('closed', () => {
-    mainWindow = null
+    mainWindow.on('closed', () => {
+      mainWindow = null
+    })
   })
 }
 
@@ -212,15 +176,49 @@ async function bootApp() {
     updateLoadingStatus('服务已就绪，正在加载…')
     mainWindow.loadURL('http://127.0.0.1:3080')
 
+    // 远程页面加载完毕后注入标题栏拖动区域
+    mainWindow.webContents.once('did-finish-load', () => {
+      mainWindow.webContents.insertCSS(`
+        body {
+          padding-top: 30px;
+          margin: 0;
+          box-sizing: border-box;
+        }
+        * { box-sizing: border-box; }
+        .titlebar-drag-region {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 30px;
+          -webkit-app-region: drag;
+          z-index: 9999;
+          pointer-events: auto;
+          background: transparent;
+        }
+        .titlebar-drag-region button,
+        .titlebar-drag-region a,
+        .titlebar-drag-region input,
+        .titlebar-drag-region select,
+        .titlebar-drag-region textarea {
+          -webkit-app-region: no-drag;
+          pointer-events: auto;
+        }
+      `)
+      mainWindow.webContents.executeJavaScript(`
+        document.body.insertAdjacentHTML('afterbegin', '<div class="titlebar-drag-region"></div>');
+      `)
+    })
+
   } catch (error) {
     console.error('Failed to start server:', error)
     showLoadingError(error.message || '服务启动失败')
   }
 }
 
-app.whenReady().then(() => {
-  createWindow()
-  bootApp()
+app.whenReady().then(async () => {
+  await createWindow()   // 等 loading.html 加载完毕
+  bootApp()              // 再启动服务检测
 })
 
 app.on('window-all-closed', () => {
