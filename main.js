@@ -16,11 +16,7 @@ function createWindow() {
       height: 800,
       show: false,
       titleBarStyle: 'hidden',
-      titleBarOverlay: {
-        color: '#FFFFFF',
-        symbolColor: '#000000',
-        height: 30
-      },
+      titleBarOverlay: false,
       backgroundColor: '#0a0c10',
       borderColor: '#0a0c10',
       webPreferences: {
@@ -52,17 +48,6 @@ function createWindow() {
   })
 }
 
-// ============================================
-// IPC: loading.html 的重试和退出按钮
-// ============================================
-ipcMain.on('loading:retry', () => {
-  bootApp()
-})
-
-ipcMain.on('loading:exit', () => {
-  app.quit()
-})
-
 // 向 loading.html 发送状态更新
 function updateLoadingStatus(msg) {
   if (mainWindow && !mainWindow.isDestroyed()) {
@@ -70,11 +55,24 @@ function updateLoadingStatus(msg) {
   }
 }
 
-function showLoadingError(msg) {
-  if (mainWindow && !mainWindow.isDestroyed()) {
-    mainWindow.webContents.send('loading:error', msg)
+// 窗口控制 IPC
+ipcMain.on('window:minimize', () => {
+  if (mainWindow) mainWindow.minimize()
+})
+
+ipcMain.on('window:maximize', () => {
+  if (mainWindow) {
+    if (mainWindow.isMaximized()) {
+      mainWindow.unmaximize()
+    } else {
+      mainWindow.maximize()
+    }
   }
-}
+})
+
+ipcMain.on('window:close', () => {
+  if (mainWindow) mainWindow.close()
+})
 
 // ============================================
 // 检测服务是否已运行
@@ -108,21 +106,10 @@ function startDshServer() {
 
     dshProcess.stdout.on('data', (data) => {
       console.log(`dsh stdout: ${data}`)
-      if (data.toString().includes('Listening on')) {
-        resolve()
-      }
     })
 
     dshProcess.stderr.on('data', (data) => {
-      const msg = data.toString()
-      console.error(`dsh stderr: ${msg}`)
-      // npx 下载进度信息实时传递
-      if (msg.includes('installed') || msg.includes('Downloading') || msg.includes('added') || msg.includes('npm warn')) {
-        // 提取关键信息，截断过长的行
-        const line = msg.split('\n').find(l => l.trim()) || msg
-        const display = line.length > 80 ? line.substring(0, 80) + '…' : line
-        updateLoadingStatus(display.trim())
-      }
+      console.error(`dsh stderr: ${data}`)
     })
 
     dshProcess.on('close', (code) => {
@@ -132,10 +119,10 @@ function startDshServer() {
       }
     })
 
-    // 90 秒超时
+    // 30 秒超时
     setTimeout(() => {
-      reject(new Error('服务启动超时，请检查网络连接'))
-    }, 90000)
+      reject(new Error('服务启动超时'))
+    }, 30000)
 
     // 轮询端口
     let attempts = 0
@@ -147,14 +134,12 @@ function startDshServer() {
       })
       req.on('error', () => {
         console.log(`Waiting for server... (${attempts})`)
-        if (attempts % 5 === 0) {
-          updateLoadingStatus(`正在等待服务响应… (${attempts}s)`)
-        }
+        updateLoadingStatus(`正在等待服务响应… (${attempts}s)`)
         setTimeout(checkPort, 1000)
       })
       req.end()
     }
-    setTimeout(checkPort, 2000)
+    setTimeout(checkPort, 1000)
   })
 }
 
@@ -176,7 +161,7 @@ async function bootApp() {
     updateLoadingStatus('服务已就绪，正在加载…')
     mainWindow.loadURL('http://127.0.0.1:3080')
 
-    // 远程页面加载完毕后注入标题栏拖动区域
+    // 远程页面加载完毕后注入标题栏和窗口控制按钮
     mainWindow.webContents.once('did-finish-load', () => {
       mainWindow.webContents.insertCSS(`
         body {
@@ -204,15 +189,63 @@ async function bootApp() {
           -webkit-app-region: no-drag;
           pointer-events: auto;
         }
+        /* 窗口控制按钮 */
+        .window-controls {
+          position: fixed;
+          top: 0;
+          right: 0;
+          display: flex;
+          z-index: 10000;
+          -webkit-app-region: no-drag;
+        }
+        .window-controls button {
+          width: 46px;
+          height: 30px;
+          border: none;
+          background: transparent;
+          color: #e8eaf0;
+          font-size: 10px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background-color 0.15s;
+        }
+        .window-controls button:hover {
+          background: rgba(255,255,255,0.1);
+        }
+        .window-controls button.close:hover {
+          background: #e81123;
+          color: #fff;
+        }
       `)
       mainWindow.webContents.executeJavaScript(`
-        document.body.insertAdjacentHTML('afterbegin', '<div class="titlebar-drag-region"></div>');
+        // 定义窗口控制函数
+        window.minimize = function() { require('electron').ipcRenderer.send('window:minimize'); };
+        window.maximize = function() { require('electron').ipcRenderer.send('window:maximize'); };
+        window.close = function() { require('electron').ipcRenderer.send('window:close'); };
+        
+        // 注入标题栏和控制按钮
+        document.body.insertAdjacentHTML('afterbegin', 
+          '<div class="titlebar-drag-region"></div>'
+          + '<div class="window-controls">'
+          + '  <button class="minimize" onclick="window.minimize()">'
+          + '    <svg width="10" height="1" viewBox="0 0 10 1"><rect width="10" height="1" fill="currentColor"/></svg>'
+          + '  </button>'
+          + '  <button class="maximize" onclick="window.maximize()">'
+          + '    <svg width="10" height="10" viewBox="0 0 10 10"><rect width="10" height="10" fill="none" stroke="currentColor" stroke-width="1"/></svg>'
+          + '  </button>'
+          + '  <button class="close" onclick="window.close()">'
+          + '    <svg width="10" height="10" viewBox="0 0 10 10"><line x1="0" y1="0" x2="10" y2="10" stroke="currentColor" stroke-width="1"/><line x1="10" y1="0" x2="0" y2="10" stroke="currentColor" stroke-width="1"/></svg>'
+          + '  </button>'
+          + '</div>'
+        );
       `)
     })
 
   } catch (error) {
     console.error('Failed to start server:', error)
-    showLoadingError(error.message || '服务启动失败')
+    updateLoadingStatus(error.message || '服务启动失败')
   }
 }
 

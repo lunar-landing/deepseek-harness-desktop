@@ -23,6 +23,9 @@
   "author": "",
   "license": "MIT",
   "type": "commonjs",
+  "dependencies": {
+    "@deepseek-ai/dsh": "^0.1.0-rc.6"
+  },
   "devDependencies": {
     "electron": "^43.4.0",
     "electron-builder": "^24.13.3",
@@ -39,7 +42,8 @@
       "main.js",
       "preload.js",
       "package.json",
-      "build/**/*"
+      "build/**/*",
+      "node_modules/@deepseek-ai/**/*"
     ],
     "win": {
       "target": [
