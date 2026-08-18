@@ -1,6 +1,6 @@
 {
   "name": "deepseek-harness-desktop",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "DeepSeek Harness Desktop Client",
   "main": "main.js",
   "scripts": {
@@ -41,6 +41,7 @@
     "files": [
       "main.js",
       "preload.js",
+      "loading.html",
       "package.json",
       "build/**/*",
       "node_modules/@deepseek-ai/**/*"
