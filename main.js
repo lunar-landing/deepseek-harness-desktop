@@ -100,7 +100,12 @@ function startDshServer() {
     updateLoadingStatus('正在启动 DeepSeek Harness 服务…')
 
     // 使用本地安装的 dsh，避免 npx 从 registry 下载
-    const dshPath = path.join(__dirname, 'node_modules', '@deepseek-ai', 'dsh', 'lib', 'bin.js')
+    // 处理 asar 路径：如果在 asar 中，需要使用 unpacked 路径
+    let appPath = __dirname
+    if (appPath.includes('app.asar')) {
+      appPath = appPath.replace('app.asar', 'app.asar.unpacked')
+    }
+    const dshPath = path.join(appPath, 'node_modules', '@deepseek-ai', 'dsh', 'lib', 'bin.js')
     dshProcess = spawn('node', [dshPath, 'web', '--port', '3080'], {
       stdio: 'pipe',
       shell: true
