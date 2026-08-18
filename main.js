@@ -99,7 +99,9 @@ function startDshServer() {
     console.log('Starting DeepSeek Harness server...')
     updateLoadingStatus('正在启动 DeepSeek Harness 服务…')
 
-    dshProcess = spawn('npx', ['@deepseek-ai/dsh', 'web', '--port', '3080'], {
+    // 使用本地安装的 dsh，避免 npx 从 registry 下载
+    const dshPath = path.join(__dirname, 'node_modules', '@deepseek-ai', 'dsh', 'lib', 'bin.js')
+    dshProcess = spawn('node', [dshPath, 'web', '--port', '3080'], {
       stdio: 'pipe',
       shell: true
     })
